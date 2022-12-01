@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="block">
+        <h1>User Profile: {{ profile.username }}</h1>
+        {% comment %} <h5><em>joined {{ profile.date_joined }}</em></h5> {% endcomment %}
+        <div>
+            <h3>Authored Maps</h3>
+            <ul>
+            {% for map in profile.maps.all %}
+                <li><a href="{% url 'map:view_map' map.url_code %}">{{ map.title }}</a></li>
+            {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+{% endblock content %}

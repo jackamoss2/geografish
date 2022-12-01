@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+viewing {{ map.title }}
+{% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
+<link rel="stylesheet" href="{% static 'main.css' %}">
+
+{% comment %} todo: fix stylesheet to prevent style application to entire webpage {% endcomment %}
+<link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
+
+<div id="app">
+    <div id="viewDiv"></div>
+    <input @change="readFile" type="file" accept=".geojson">
+    <input value="{{ map.id }}" type="hidden" id="map-id">
+</div>
+
+<!-- Vue -->
+<script src="https://unpkg.com/vue@2"></script>
+<!-- Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+
+<script src="https://js.arcgis.com/4.25/"></script>
+<script src="{% static 'esri_map.js' %}"></script>
+
+{% endblock content %}
