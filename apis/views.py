@@ -54,9 +54,11 @@ def map_detail(request, pk):
 @api_view(['GET', 'POST'])
 def data_list(request):
     if request.method == 'GET':
-        geospatial_data = GeospatialData.objects.all()
-        serializer = GeospatialDataSerializer(geospatial_data, many=True)
-        return Response(serializer.data)
+        map_id = request.GET.get("map_id")
+        if map_id:
+            geospatial_data = GeospatialData.objects.filter(maps__id=map_id)
+            serializer = GeospatialDataSerializer(geospatial_data, many=True)
+            return Response(serializer.data)
 
     elif request.method == 'POST':
         # print(request.data)
@@ -69,6 +71,8 @@ def data_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+    
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def data_detail(request, pk):

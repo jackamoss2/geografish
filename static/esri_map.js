@@ -96,7 +96,16 @@ let vm = new Vue({
     
     beforeMount: function() {
         this.csrftoken = this.getCookie('csrftoken');
-        geospatial_data_sets = 
+        // axios({
+        //     method: 'GET',
+        //     url: '/apis/v1/data/',
+        //     headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
+        //     data: {
+        //         title: 'axios data',
+        //         maps: [parseInt(this.mapID),],
+        //         geospatial_data: geospatialData,
+        //     },
+        // })
 
         this.loadMap()
     },
