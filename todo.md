@@ -1,0 +1,12 @@
+# to do
+- fix data read on map load initiation
+- access vue data within arcgis api function?
+    - list layers with visibility toggle
+- put request axios
+    - change map name
+    - change data name
+- create new model/serializer for map settings, similar to data model/serializer
+- add popup card, containing map settings, title etc
+- add saved maps section to user profile, so users can easily return to other people's maps
+    - toggle my maps, all saved maps - default all maps
+    - search function?? O_O

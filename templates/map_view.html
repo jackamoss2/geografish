@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 
-viewing {{ map.title }}
 {% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
 <link rel="stylesheet" href="{% static 'main.css' %}">
 
@@ -10,7 +9,10 @@ viewing {{ map.title }}
 <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
 
 <div id="app">
+    Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
+    Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a>
     <div id="viewDiv"></div>
+    <span id="layerToggle" class="esri-widget"> <input type="checkbox" id="?" checked /> layer visility </span>
     <input @change="readFile" type="file" accept=".geojson">
     <input value="{{ map.id }}" type="hidden" id="map-id">
 </div>
