@@ -12,7 +12,16 @@
     Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
     Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a>
     <div id="viewDiv"></div>
-    <span id="layerToggle" class="esri-widget"> <input type="checkbox" id="?" checked /> layer visility </span>
+    <div id="rendererDiv" class="esri-widget">
+        <ul id="layerToggles">
+            {% comment %} <template v-for="layer in dataLayers">
+                <li>
+                    <input id="layer-toggle" type="checkbox" @change="toggleLayerVisibility()">
+                    <p>{& layer.title &}</p>
+                </li>
+            </template> {% endcomment %}
+        </ul>
+    </div>
     <input @change="readFile" type="file" accept=".geojson">
     <input value="{{ map.id }}" type="hidden" id="map-id">
 </div>

@@ -29,7 +29,7 @@ def map_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE', 'PATCH',])
 def map_detail(request, pk):
     try:
         map = Map.objects.get(pk=pk)
@@ -50,6 +50,13 @@ def map_detail(request, pk):
     elif request.method == 'DELETE':
         map.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    # elif request.method == 'PATCH':
+    #     serializer = MapSerializer(map, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def data_list(request):

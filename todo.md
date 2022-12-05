@@ -1,12 +1,27 @@
 # to do
-- fix data read on map load initiation
-- access vue data within arcgis api function?
+- ! fix data iteration error on map initiation - need help
+- ! access vue data within arcgis api function? - need help
     - list layers with visibility toggle
-- put request axios
+- ! put request axios - need help
     - change map name
     - change data name
+- review mapLoad function
+    - global var; can't initiate map or view in function - just declare in main function
+    - functions to handle map view changes
+        - on data load -> redirect based on upload file type -> process in function tailored to file type
+        - on data style/display change -> reload layer with new attributes
+        - on map view change
+            - if basemap/visual styles change, reload
+            - if just capturing 
 - create new model/serializer for map settings, similar to data model/serializer
 - add popup card, containing map settings, title etc
 - add saved maps section to user profile, so users can easily return to other people's maps
     - toggle my maps, all saved maps - default all maps
     - search function?? O_O
+- each new layer gets new color
+- ability to customize layer color
+    - customize point shape? customize polygon border/line linetype?
+- add notes field to geospatial data model; allow users to add notes that will be displayed
+- add view interaction buttons
+    - set base view
+        - add support for multiple views?

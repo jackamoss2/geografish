@@ -2,9 +2,20 @@ body {
     background-color: bisque;
 }
 
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
 #viewDiv {
     padding: 0;
     margin: 0;
     height: 500px;
     width: 500px;
 }
+
+#rendererDiv {
+    padding: 10px;
+    width: 280px;
+  }
