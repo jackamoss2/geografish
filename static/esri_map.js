@@ -14,9 +14,9 @@ let vm = new Vue({
         // const fileSelector = document.getElementById('file-selector');
     },
     methods: {
-        loadMap: function(action, data=[]) {
-            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer",],
-            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer,) { // 
+        loadMap: function(action, data=null,) {
+            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand",],
+            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand,) {
                 if (action == 'initiate') {
                     esriConfig.apiKey = "AAPKa69c01d84be143d2aed0ad78c6386646fab0glupksy3eawHfYb4yW1TrjMS8hwjuF8YpsVqpzPfq0xCKaz-k-sIq9hXymW9"
                     vm.map = new Map({
@@ -32,32 +32,46 @@ let vm = new Vue({
                         },
                     })
                     vm.view.popup.defaultPopupTemplateEnabled = true
+                    
+                    const expand = new Expand({
+                        view: vm.view,
+                        content: document.getElementById("rendererDiv"),
+                        expanded: true,
+                        expandIconClass: "esri-icon-settings2",
+                        // container: document.getElementById("viewDiv"),
+                        mode: "floating",
+                    })
+                    
+                    vm.view.ui.add(expand, "top-right");
                 }
                 
-                // renders geojson on map
-                const createAddGeoJsonLayer = (geospatial_data) => {
+                // renders geojson,visibility toggles on map
+                // takes geospatial_data object which contains geojson
+                const createAddGeoJsonLayer = (geospatial_data, visibility=true) => {
+                    // create arcgis objects and add to map
                     geojson = geospatial_data.geospatial_data
-
                     const blob = new Blob([JSON.stringify(geojson)], {
                         type: "application/json"
                     })
-                    // console.log(JSON.stringify(geojson))
-    
                     const url = URL.createObjectURL(blob)
-    
                     const geojsonlayer = new GeoJSONLayer({
                         url,
                     })
-    
                     vm.map.layers.add(geojsonlayer)      
-
-                    console.log(geojson)
-
+                    
+                    // add visibility toggle html elements
                     const node = document.createElement("li")
                     const buttonNode = document.createElement("input")
                     buttonNode.id = "layer-toggle"
                     buttonNode.type = "checkbox"
-                    buttonNode.checked = "true"
+                    if (visibility === true) {
+                        buttonNode.checked = true
+                        geojsonlayer.visible = true
+                    }
+                    else {
+                        buttonNode.checked = false
+                        geojsonlayer.visible = false
+                    }
                     let functionText = "toggleLayerVisibility(" + String(geospatial_data.id) + ")"
                     buttonNode.setAttribute("v-on:click", functionText)
                     node.appendChild(buttonNode)
@@ -69,26 +83,21 @@ let vm = new Vue({
                     // todo: add delete button; deletes data from database and removes the html elements
                     // todo: allow user to change data name
                     vm.layerToggles.appendChild(node)     
+                     
+                }
+
+                if (action == 'upload new data') {
+                    createAddGeoJsonLayer({geospatial_data:data,})
                 }
 
                 // loads linked data and passes to createAddGeoJsonLayer function
                 if (action == 'load from database') {
                     for (let geospatial_data of data) { // multiple points are used instead of multipoint object because I can't figure out how to add attributes to multipoint nodes   
                         vm.dataLayers.push({id:geospatial_data.id,title:geospatial_data.title,visible:true,})
-                        createAddGeoJsonLayer(geospatial_data)
+                        createAddGeoJsonLayer(geospatial_data, visibility=true)
                     }
                 }
-
-
-                // view.when( function () { // https://jsfiddle.net/vgf5cryz
-                //     console.log('load event called');
-                //     map.layers.add(featureLayer);
-                //     });
-
             })
-        },
-        toggleLayerVisibility(layerId) {
-            console.log('toggle vis')
         },
         readFile(event) {
             const file = event.target.files[0]
@@ -123,6 +132,7 @@ let vm = new Vue({
                 },
             })
             .then(function (response) {
+                vm.loadMap(action='upload new data', data=geospatialData)
                 console.log(response)
             })
             .catch(function (error) {
