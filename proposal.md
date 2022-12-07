@@ -43,3 +43,24 @@ Allow for map characteristics to be modified and saved, such as load-up view and
 Increase upload data limit, and impliment data display limitations based on browser capacity. Add functionality for multiple users to interact in the same map.
 ### Milestone 4, estimated eternity
 All other features listed in features list
+
+# End of submitted proposal
+
+revised schedule:
+### Milestone 1: MVP, cloud data
+- Functional data, map, display models
+- user system, with profiles and published maps
+- interactive display capable of sufficient visual customization
+- only geojson
+- webpage styling
+- code to handle excessively large data upload; require user to zoom until reasonable
+- allow data to be uploaded as csv, shp, others?
+### Milestone 2: share local data
+- allow user to "host" map session
+    - additional user session requests data from host thru server, server does not cache data
+- show user selection, allow user to shift-click(?) and project red circle to others, drag to size circle
+### Milestone 3:
+- allow user to set up links to files saved on harddrive, internal server
+    - ex: project files on office server
+    - allows for milestone 2 sharing local data
+

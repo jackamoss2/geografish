@@ -4,7 +4,7 @@ from map import models
 class DataHashSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.GeospatialData
-        fields = ['id', 'data_hash',]
+        fields = ['id', 'title', 'data_hash',]
 
 class GeospatialDataSerializer(serializers.ModelSerializer):
     maps = serializers.PrimaryKeyRelatedField(many=True, queryset=models.Map.objects.all(), required=False,)

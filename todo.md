@@ -1,10 +1,6 @@
 # to do
-- ! fix data iteration error on map initiation - need help
-- ! access vue data within arcgis api function? - need help
-    - list layers with visibility toggle
-- ! put request axios - need help
-    - change map name
-    - change data name
+- add popup to check if user is sure that they want to remove data layer
+- fix create new data layer; if not existing data in db, fails to load in map properly
 - review mapLoad function
     - global var; can't initiate map or view in function - just declare in main function
     - functions to handle map view changes
@@ -14,7 +10,6 @@
             - if basemap/visual styles change, reload
             - if just capturing 
 - create new model/serializer for map settings, similar to data model/serializer
-- add popup card, containing map settings, title etc
 - add saved maps section to user profile, so users can easily return to other people's maps
     - toggle my maps, all saved maps - default all maps
     - search function?? O_O

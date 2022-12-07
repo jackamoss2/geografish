@@ -48,11 +48,14 @@ let vm = new Vue({
                     vm.view.ui.add(expand, "top-right");
                 }
                 
-                // renders geojson,visibility toggles on map
+                // renders geojson on map, creates html elements for visual changes Expand panel
                 // takes geospatial_data object which contains geojson
                 const createAddGeoJsonLayer = (geospatial_data, visibility=true) => {
                     // create arcgis objects and add to map
                     geojson = geospatial_data.geospatial_data
+                    if (geojson == undefined) {
+                        geojson = geospatial_data
+                    }
                     const blob = new Blob([JSON.stringify(geojson)], {
                         type: "application/json"
                     })
@@ -92,31 +95,34 @@ let vm = new Vue({
                         // splice map out of data's maps array, then axios request to update in database
                         let index = geospatial_data.maps.indexOf(vm.mapID)
                         geospatial_data.maps.splice(index, 1)
-                        axios({
-                            method: 'PUT',
-                            url: '/apis/v1/data/' + geospatial_data.id + '/',
-                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                            data: {
-                                maps: geospatial_data.maps,
-                            },
-                        })
-                        .catch(function (error) {
-                            console.log(error)
-                        })
-
-                        // vm.deleteData(geospatial_data.id) // removes data from all maps
+                        if (geospatial_data.maps.length == 0) {
+                            // if no more map links on data, remove the data from db
+                            vm.deleteData(geospatial_data.id)
+                        }
+                        else {
+                            // otherwise, just update db with updated map list
+                            axios({
+                                method: 'PUT',
+                                url: '/apis/v1/data/' + geospatial_data.id + '/',
+                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                data: {
+                                    maps: geospatial_data.maps,
+                                },
+                            })
+                            .catch(function (error) {
+                                console.log(error)
+                            })
+                        }
                     })
                     node.appendChild(deleteButtonNode)
 
-                    // todo: add delete button; deletes data from database and removes the html elements
                     // todo: allow user to change data name
                     vm.layerToggles.appendChild(node)     
-                     
                 }
 
+                // loads newly linked data and passes to createAddGeoJsonLayer function
                 if (action == 'upload new data') {
                     vm.dataLayers.push(data.id)
-                    console.log(data)
                     createAddGeoJsonLayer(data)
                 }
 
@@ -124,7 +130,6 @@ let vm = new Vue({
                 if (action == 'load from database') {
                     for (let geospatial_data of data) { // multiple points are used instead of multipoint object because I can't figure out how to add attributes to multipoint nodes
                         vm.dataLayers.push(geospatial_data.id)
-                        console.log(geospatial_data)
                         createAddGeoJsonLayer(geospatial_data, visibility=true)
                     }
                 }
@@ -140,7 +145,7 @@ let vm = new Vue({
             }
             reader.readAsText(file)
         },
-        createMap: function() {
+        createMap: function() { // todo: ensure function not used; remove
             axios.post('/map', {
                 title: 'axios map',
             })
@@ -169,11 +174,11 @@ let vm = new Vue({
                 let json_string = JSON.stringify(geospatialData)
                 let data_hash = sha256(json_string)
                 let createNewData = true
-
                 
-                // first, check all existing data_hashes to see if file already in db
+                // then, check all existing data_hashes to see if file already in db
                 for (let geospatial_data_ref of response.data) { 
-                    if (geospatial_data_ref.data_hash == data_hash) { // if geospatial_data already in database
+                    // if geospatial_data already in database
+                    if (geospatial_data_ref.data_hash == data_hash) { 
                         createNewData = false
                         // get existing geospatial_data object
                         axios({
@@ -182,6 +187,9 @@ let vm = new Vue({
                         }).then(response => {
                             let existingGeospatialData = response.data[0]
                             existingGeospatialData.maps.push(Number(vm.mapID))
+                            // add data to map view
+                            vm.loadMap(action='upload new data', data=existingGeospatialData)
+                            // update data's map list in db
                             axios({
                                 method: 'PUT',
                                 url: '/apis/v1/data/' + existingGeospatialData.id + '/',
@@ -191,10 +199,6 @@ let vm = new Vue({
                                     maps: existingGeospatialData.maps,
                                 },
                             })
-                            // once data has been linked to map, add data to map view
-                            .then(function () {
-                                vm.loadMap(action='upload new data', data=existingGeospatialData)
-                            })
                             .catch(function (error) {
                                 console.log(error)
                             })
@@ -202,26 +206,26 @@ let vm = new Vue({
                     }
                 }
 
-                // then, if no match found, create object in db
+                // finally, if no match found, create object in db
                 if (createNewData == true) {
-                    console.log('creating data')
                     axios({
                         method: 'POST',
                         url: '/apis/v1/data/',
                         headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
                         data: {
-                            title: 'axios data',
-                            maps: [parseInt(vm.mapID),],
+                            title: geospatialData.name,
                             geospatial_data: geospatialData,
+                            maps: [parseInt(vm.mapID),],
                             data_hash: data_hash,
                         },
                     })
                     // once object is created, get object and add to map view
+                    // need to pass to db and get from db in order to get id
                     .then(function () {
                         axios({
                             method: 'GET',
                             url: '/apis/v1/data/?data_hash=' + data_hash,
-                        }).then(function () {
+                        }).then(response => {
                             let newGeospatialData = response.data[0]
                             vm.loadMap(action='upload new data', data=newGeospatialData)
                         })

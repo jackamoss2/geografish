@@ -63,15 +63,16 @@ def data_list(request):
     if request.method == 'GET':
         map_id = request.GET.get("map_id")
         data_hash = request.GET.get("data_hash")
-        if map_id:
+        if map_id: # returns data object
             geospatial_data = GeospatialData.objects.filter(maps__id=map_id)
             serializer = GeospatialDataSerializer(geospatial_data, many=True)
             return Response(serializer.data)
-        elif data_hash:
+        elif data_hash: # returns data object
             geospatial_data = GeospatialData.objects.filter(data_hash=data_hash)
+            print(geospatial_data)
             serializer = GeospatialDataSerializer(geospatial_data, many=True)
             return Response(serializer.data)
-        else:
+        else: # returns array of data object: id, name, hash (no geospatial data)
             geospatial_data = GeospatialData.objects.all()
             serializer = DataHashSerializer(geospatial_data, many=True)
             return Response(serializer.data)
