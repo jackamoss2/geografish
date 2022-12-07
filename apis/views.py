@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from map.models import Map, GeospatialData
-from apis.serializers import MapSerializer, GeospatialDataSerializer
+from apis.serializers import MapSerializer, GeospatialDataSerializer, DataHashSerializer
 
 # class ListMap(generics.ListCreateAPIView):
 #     queryset = models.Map.objects.all()
@@ -62,9 +62,18 @@ def map_detail(request, pk):
 def data_list(request):
     if request.method == 'GET':
         map_id = request.GET.get("map_id")
+        data_hash = request.GET.get("data_hash")
         if map_id:
             geospatial_data = GeospatialData.objects.filter(maps__id=map_id)
             serializer = GeospatialDataSerializer(geospatial_data, many=True)
+            return Response(serializer.data)
+        elif data_hash:
+            geospatial_data = GeospatialData.objects.filter(data_hash=data_hash)
+            serializer = GeospatialDataSerializer(geospatial_data, many=True)
+            return Response(serializer.data)
+        else:
+            geospatial_data = GeospatialData.objects.all()
+            serializer = DataHashSerializer(geospatial_data, many=True)
             return Response(serializer.data)
 
     elif request.method == 'POST':

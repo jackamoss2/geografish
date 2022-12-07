@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Map(models.Model):
     title = models.CharField(max_length=32)
@@ -18,9 +19,10 @@ class Map(models.Model):
         ordering = ['-created']
 
 class GeospatialData(models.Model):
-    title = models.CharField(max_length=32)
-    maps = models.ManyToManyField(Map, related_name='data_sets')
-    geospatial_data = models.JSONField()
+    title = models.CharField(max_length=32, null=True, blank=True,)
+    maps = models.ManyToManyField(Map, related_name='data_sets',)
+    geospatial_data = models.JSONField(null=True, blank=True,)
+    data_hash = models.CharField(max_length=64, null=True, blank=True,) # SHA-256, used to check if geospatial_data exists already
 
     def __str__(self):
         return self.title
