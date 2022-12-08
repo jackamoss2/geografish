@@ -103,15 +103,18 @@ def data_detail(request, pk):
 
 @api_view(['GET', 'POST'])
 def renderer_list(request):
+    print('beginning of request')
+    print(request)
+    print('end of request')
     if request.method == 'GET':
         map_id = request.GET.get("map_id")
         if map_id:
-            renderers = Renderer.objects.filter(maps__id=map_id)
-            serializer = RendererSerializer(geospatial_data, many=True)
+            renderers = Renderer.objects.filter(linked_map_id__id=map_id)
+            serializer = RendererSerializer(renderers, many=True)
             return Response(serializer.data)
         else:
             renderers = Renderer.objects.all()
-            serializer = RendererSerializer(maps, many=True)
+            serializer = RendererSerializer(renderers, many=True)
             return Response(serializer.data)
 
     elif request.method == 'POST':
