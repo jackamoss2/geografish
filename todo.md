@@ -1,14 +1,23 @@
 # to do
+- add layer display customization
+    - card popup containing parameters, delete button
+        - could assign Expand contents to new var, clear Expand, populate with display params, then restore to new var when done editing
+    - points
+        - inner color
+        - border color
+        - shape?
+    - lines
+        - inner color
+        - border color
+        - thickness
+        - linetype?
+    - polygons
+        - inner color
+        - inner transparency
+        - border color
+        - border thickness
+        - border linetype?
 - add popup to check if user is sure that they want to remove data layer
-- fix create new data layer; if not existing data in db, fails to load in map properly
-- review mapLoad function
-    - global var; can't initiate map or view in function - just declare in main function
-    - functions to handle map view changes
-        - on data load -> redirect based on upload file type -> process in function tailored to file type
-        - on data style/display change -> reload layer with new attributes
-        - on map view change
-            - if basemap/visual styles change, reload
-            - if just capturing 
 - create new model/serializer for map settings, similar to data model/serializer
 - add saved maps section to user profile, so users can easily return to other people's maps
     - toggle my maps, all saved maps - default all maps

@@ -20,6 +20,25 @@ let vm = new Vue({
         loadMap: function(action, data=null,) {
             require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand",],
             function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand,) {
+                let colorOptions = [
+                    {name:"Red",hex:"FF0000"},
+                    {name:"Pink",hex:"FFC0CB"},
+                    {name:"Magenta",hex:"FF00FF"},
+                    {name:"Purple",hex:"9B30FF"},
+                    {name:"Blue",hex:"0000FF"},
+                    {name:'Turquoise',hex:"00F5FF"},
+                    {name:'Steel Blue',hex:"4682B4"},
+                    {name:'Lime Green',hex:"00FF00"},
+                    {name:'Forest Green',hex:"228B22"},
+                    {name:'Yellow',hex:"FFFF00"},
+                    {name:"Goldenrod",hex:"DAA520"},
+                    {name:'Brick',hex:"9C661F"},
+                    {name:'Black',hex:"000000"},
+                    {name:'Dark Gray',hex:"5B5B5B"},
+                    {name:'Light Gray',hex:"C1C1C1"},
+                    {name:'White',hex:"FFFFFF"},
+                ]
+                
                 if (action == 'initiate') {
                     esriConfig.apiKey = "AAPKa69c01d84be143d2aed0ad78c6386646fab0glupksy3eawHfYb4yW1TrjMS8hwjuF8YpsVqpzPfq0xCKaz-k-sIq9hXymW9"
                     vm.map = new Map({
@@ -66,7 +85,7 @@ let vm = new Vue({
                     vm.map.layers.add(geojsonlayer)      
                     
                     // add visibility toggle html elements
-                    const node = document.createElement("li")
+                    const node = document.createElement("li") // "node" is the line containing html elements specific to this layer
                     const visibilityButtonNode = document.createElement("input")
                     visibilityButtonNode.id = "layer-toggle"
                     visibilityButtonNode.type = "checkbox"
@@ -80,41 +99,93 @@ let vm = new Vue({
                     }
                     let functionText = "toggleLayerVisibility(" + String(geospatial_data.id) + ")"
                     visibilityButtonNode.setAttribute("v-on:click", functionText)
-                    node.appendChild(visibilityButtonNode)
-                    const textNode = document.createTextNode(geojson.name)
-                    node.appendChild(textNode)
                     visibilityButtonNode.addEventListener("change", () => {
                         geojsonlayer.visible = visibilityButtonNode.checked
                     })
-                    const deleteButtonNode = document.createElement("button")
-                    deleteButtonNode.textContent="Delete"
-                    deleteButtonNode.addEventListener("click", () => {
-                        node.remove() // remove toggle elements from settings panel
-                        vm.map.layers.remove(geojsonlayer) // remove plotted data from map
+                    node.appendChild(visibilityButtonNode)
 
-                        // splice map out of data's maps array, then axios request to update in database
-                        let index = geospatial_data.maps.indexOf(vm.mapID)
-                        geospatial_data.maps.splice(index, 1)
-                        if (geospatial_data.maps.length == 0) {
-                            // if no more map links on data, remove the data from db
-                            vm.deleteData(geospatial_data.id)
+                    const textNode = document.createTextNode(geojson.name)
+                    node.appendChild(textNode)
+
+                    // modify layer display panel
+                    const modifyButtonNode = document.createElement("button")
+                    modifyButtonNode.textContent="modify" // todo: change text to gear symbol, same as expand
+                    modifyButtonNode.addEventListener("click", () => {
+                        let expandModify = document.getElementById("expand-modify")
+                        expandModify.style.display = "block"
+                        let expandDefault = document.getElementById("expand-default")
+                        expandDefault.style.display = "none"
+                        
+                        
+
+                        const returnButtonNode = document.createElement("button")
+                        returnButtonNode.textContent="return" // todo: change text to back symbol (<)
+                        returnButtonNode.addEventListener("click", () => {
+                            expandModify.style.display = "none"
+                            expandModify.innerHTML = "" // cleans div to prepare for another set of layer properties
+                            expandDefault.style.display = "block"
+                        })
+                        expandModify.appendChild(returnButtonNode)
+
+                        const layerStyleHeaderNode = document.createElement("h3")
+                        layerStyleHeaderNode.textContent="Modify Layer Style"
+                        expandModify.appendChild(layerStyleHeaderNode)
+
+                        const parameterUlNode = document.createElement("ul") // list of parameters displayed to edit
+                        expandModify.appendChild(parameterUlNode)
+
+                        // todo: add different cases depending on feature type; point, polygon, line
+                        function createAddColorSelector(id, paramenterName) {
+                            const parameterLiNode = document.createElement("li")
+                            const innerColorTextNode = document.createTextNode(paramenterName)
+                            const innerColorSelectNode = document.createElement("select")
+                            innerColorSelectNode.id = id
+                            for (var i = 0; i < colorOptions.length; i++) {
+                                let option = document.createElement("option")
+                                option.value = "#" + colorOptions[i].hex
+                                option.style.backgroundColor = option.value
+                                option.text = colorOptions[i].name
+                                innerColorSelectNode.appendChild(option)
+                            parameterLiNode.appendChild(innerColorTextNode)}
+                            parameterLiNode.appendChild(innerColorSelectNode)
+                            parameterUlNode.appendChild(parameterLiNode)
                         }
-                        else {
-                            // otherwise, just update db with updated map list
-                            axios({
-                                method: 'PUT',
-                                url: '/apis/v1/data/' + geospatial_data.id + '/',
-                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                data: {
-                                    maps: geospatial_data.maps,
-                                },
-                            })
-                            .catch(function (error) {
-                                console.log(error)
-                            })
-                        }
+
+                        createAddColorSelector("inner-color-selection", "Color")
+                        createAddColorSelector("border-color-selection", "Border Color")
+                        
+                        const deleteButtonNode = document.createElement("button")
+                        deleteButtonNode.id = "delete-layer" // todo: format button to be red
+                        deleteButtonNode.textContent="Delete"
+                        deleteButtonNode.addEventListener("click", () => {
+                            node.remove() // remove toggle elements from settings panel
+                            vm.map.layers.remove(geojsonlayer) // remove plotted data from map
+    
+                            // splice map out of data's maps array, then axios request to update in database
+                            let index = geospatial_data.maps.indexOf(vm.mapID)
+                            geospatial_data.maps.splice(index, 1)
+                            if (geospatial_data.maps.length == 0) {
+                                // if no more map links on data, remove the data from db
+                                vm.deleteData(geospatial_data.id)
+                            }
+                            else {
+                                // otherwise, just update db with updated map list
+                                axios({
+                                    method: 'PUT',
+                                    url: '/apis/v1/data/' + geospatial_data.id + '/',
+                                    headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                    data: {
+                                        maps: geospatial_data.maps,
+                                    },
+                                })
+                                .catch(function (error) {
+                                    console.log(error)
+                                })
+                            }
+                        })
+                        expandModify.appendChild(deleteButtonNode)
                     })
-                    node.appendChild(deleteButtonNode)
+                    node.appendChild(modifyButtonNode)
 
                     // todo: allow user to change data name
                     vm.layerToggles.appendChild(node)     

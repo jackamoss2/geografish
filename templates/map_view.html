@@ -13,18 +13,24 @@
     Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a>
     <div id="viewDiv"></div>
     <div id="rendererDiv" class="esri-widget">
-        <h3>Layers</h3>
-        <p v-if="dataLayers.length === 0">No data has been added to this map.</p>
-        <ul id="layerToggles">
-            {% comment %} <template v-for="layer in dataLayers">
-                <li>
-                    <input id="layer-toggle" type="checkbox" @change="toggleLayerVisibility()">
-                    <p>{& layer.title &}</p>
-                </li>
-            </template> {% endcomment %}
-        </ul>
-        <h3>Add New Layer</h3>
-        <input @change="readFile" type="file" accept=".geojson">
+        <div>
+            <div id="expand-default">
+                <h3>Layers</h3>
+                <p v-if="dataLayers.length === 0">No data has been added to this map.</p>
+                <ul id="layerToggles">
+                    {% comment %} <template v-for="layer in dataLayers">
+                        <li>
+                            <input id="layer-toggle" type="checkbox" @change="toggleLayerVisibility()">
+                            <p>{& layer.title &}</p>
+                        </li>
+                    </template> {% endcomment %}
+                </ul>
+                <h3>Add New Layer</h3>
+                <input @change="readFile" type="file" accept=".geojson">
+            </div>
+            <div id="expand-modify" style="display: none">
+            </div>
+        </div>
     </div>
     <input value="{{ map.id }}" type="hidden" id="map-id">
 </div>

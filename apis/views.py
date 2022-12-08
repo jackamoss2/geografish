@@ -4,16 +4,10 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
-from map.models import Map, GeospatialData
-from apis.serializers import MapSerializer, GeospatialDataSerializer, DataHashSerializer
+from map.models import Map, GeospatialData, Renderer
+from apis.serializers import MapSerializer, GeospatialDataSerializer, DataHashSerializer, RendererSerializer
 
-# class ListMap(generics.ListCreateAPIView):
-#     queryset = models.Map.objects.all()
-#     serializer_class = MapSerializer
-
-# class DetailMap(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = models.Map.objects.all()
-#     serializer_class = MapSerializer
+# Map
 
 @api_view(['GET', 'POST'])
 def map_list(request):
@@ -50,13 +44,9 @@ def map_detail(request, pk):
     elif request.method == 'DELETE':
         map.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    # elif request.method == 'PATCH':
-    #     serializer = MapSerializer(map, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Geospatial Data
 
 @api_view(['GET', 'POST'])
 def data_list(request):
@@ -69,7 +59,6 @@ def data_list(request):
             return Response(serializer.data)
         elif data_hash: # returns data object
             geospatial_data = GeospatialData.objects.filter(data_hash=data_hash)
-            print(geospatial_data)
             serializer = GeospatialDataSerializer(geospatial_data, many=True)
             return Response(serializer.data)
         else: # returns array of data object: id, name, hash (no geospatial data)
@@ -78,13 +67,9 @@ def data_list(request):
             return Response(serializer.data)
 
     elif request.method == 'POST':
-        # print(request.data)
         serializer = GeospatialDataSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            # print(serializer.id)
-            # map = get_object_or_404(Map.objects.filter(id=request.data['mapID']))
-            # serializer.maps.add(map)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
@@ -111,4 +96,49 @@ def data_detail(request, pk):
 
     elif request.method == 'DELETE':
         geospatial_data.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Renderer
+
+@api_view(['GET', 'POST'])
+def renderer_list(request):
+    if request.method == 'GET':
+        map_id = request.GET.get("map_id")
+        if map_id:
+            renderers = Renderer.objects.filter(maps__id=map_id)
+            serializer = RendererSerializer(geospatial_data, many=True)
+            return Response(serializer.data)
+        else:
+            renderers = Renderer.objects.all()
+            serializer = RendererSerializer(maps, many=True)
+            return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = RendererSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+
+@api_view(['GET', 'PUT', 'DELETE', 'PATCH',])
+def renderer_detail(request, pk):
+    try:
+        renderer = Renderer.objects.get(pk=pk)
+    except Renderer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = RendererSerializer(renderer)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = RendererSerializer(renderer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        renderer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
