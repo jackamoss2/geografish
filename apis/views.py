@@ -104,7 +104,7 @@ def data_detail(request, pk):
 @api_view(['GET', 'POST'])
 def renderer_list(request):
     print('beginning of request')
-    print(request)
+    print(request.data)
     print('end of request')
     if request.method == 'GET':
         map_id = request.GET.get("map_id")

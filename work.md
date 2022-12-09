@@ -5,4 +5,7 @@
 - added renderer model and api support
 
 # completed 12/8
-- 
+- completed renderer model and api
+- minor UI upgrades (basic buttons changed to icons)
+
+

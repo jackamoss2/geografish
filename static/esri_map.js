@@ -21,22 +21,22 @@ let vm = new Vue({
             require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand",],
             function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand,) {
                 let colorOptions = [
-                    {name:"Red",hex:"FF0000"},
-                    {name:"Pink",hex:"FFC0CB"},
-                    {name:"Magenta",hex:"FF00FF"},
-                    {name:"Purple",hex:"9B30FF"},
-                    {name:"Blue",hex:"0000FF"},
-                    {name:'Turquoise',hex:"00F5FF"},
-                    {name:'Steel Blue',hex:"4682B4"},
-                    {name:'Lime Green',hex:"00FF00"},
-                    {name:'Forest Green',hex:"228B22"},
-                    {name:'Yellow',hex:"FFFF00"},
-                    {name:"Goldenrod",hex:"DAA520"},
-                    {name:'Brick',hex:"9C661F"},
-                    {name:'Black',hex:"000000"},
-                    {name:'Dark Gray',hex:"5B5B5B"},
-                    {name:'Light Gray',hex:"C1C1C1"},
-                    {name:'White',hex:"FFFFFF"},
+                    {name:"Red",hex:"#FF0000"},
+                    {name:"Pink",hex:"#FFC0CB"},
+                    {name:"Magenta",hex:"#FF00FF"},
+                    {name:"Purple",hex:"#9B30FF"},
+                    {name:"Blue",hex:"#0000FF"},
+                    {name:'Turquoise',hex:"#00F5FF"},
+                    {name:'Steel Blue',hex:"#4682B4"},
+                    {name:'Lime Green',hex:"#00FF00"},
+                    {name:'Forest Green',hex:"#228B22"},
+                    {name:'Yellow',hex:"#FFFF00"},
+                    {name:"Goldenrod",hex:"#DAA520"},
+                    {name:'Brick',hex:"#9C661F"},
+                    {name:'Black',hex:"#000000"},
+                    {name:'Dark Gray',hex:"#5B5B5B"},
+                    {name:'Light Gray',hex:"#C1C1C1"},
+                    {name:'White',hex:"#FFFFFF"},
                 ]
                 
                 if (action == 'initiate') {
@@ -67,98 +67,6 @@ let vm = new Vue({
                     
                     vm.view.ui.add(expand, "top-right");
                 }
-                
-                const expandModifyPanel = (event) => {
-                    let expandModify = document.getElementById("expand-modify")
-                    expandModify.style.display = "block"
-                    let expandDefault = document.getElementById("expand-default")
-                    expandDefault.style.display = "none"
-                    
-                    // function returnButtonAction () {}
-
-                    // todo: add axios fn to update renderer in db when user hits return btn
-                    const returnButtonNode = document.createElement("span")
-                    returnButtonNode.classList.add("esri-icon-left")
-                    returnButtonNode.setAttribute("aria-label", "close icon")
-                    returnButtonNode.addEventListener("click", () => {
-                        expandModify.style.display = "none"
-                        expandModify.innerHTML = "" // cleans div to prepare for another set of layer properties
-                        expandDefault.style.display = "block"
-                    })
-                    expandModify.appendChild(returnButtonNode)
-
-                    const layerStyleHeaderNode = document.createElement("h3")
-                    layerStyleHeaderNode.textContent="Modify Style: " + event.target.parentNode.textContent
-                    expandModify.appendChild(layerStyleHeaderNode)
-
-                    const parameterUlNode = document.createElement("ul") // list of parameters displayed to edit
-                    parameterUlNode.classList.add("style-edit")
-                    expandModify.appendChild(parameterUlNode)
-
-                    // todo: add different cases depending on feature type; point, polygon, line
-                    function createAddColorSelector(id, paramenterName) { // takes element id and displayed name of parameter
-                        const parameterLiNode = document.createElement("li")
-                        const innerColorTextNode = document.createTextNode(paramenterName)
-                        const innerColorSelectNode = document.createElement("select")
-                        innerColorSelectNode.id = id
-                        for (var i = 0; i < colorOptions.length; i++) {
-                            let option = document.createElement("option")
-                            option.value = "#" + colorOptions[i].hex
-                            option.style.backgroundColor = option.value
-                            option.text = colorOptions[i].name
-                            innerColorSelectNode.appendChild(option)
-                        parameterLiNode.appendChild(innerColorTextNode)}
-                        parameterLiNode.appendChild(innerColorSelectNode)
-                        parameterUlNode.appendChild(parameterLiNode)
-                    }
-
-                    createAddColorSelector("inner-color-selection", "Color")
-                    createAddColorSelector("border-color-selection", "Border Color")
-                    let colorSelection = document.getElementById("inner-color-selection")
-                    colorSelection.addEventListener('selectionchange', (event) => {
-                        console.log('ok')
-                        console.log(event)
-                    })
-                    let borderColorSelection = document.getElementById("border-color-selection")
-                    borderColorSelection.addEventListener('selectionchange', (event) => {
-                        console.log(event)
-                    })
-
-                    
-                    const deleteButtonNode = document.createElement("span")
-                    deleteButtonNode.classList.add("esri-icon-trash")
-                    deleteButtonNode.setAttribute("aria-label", "close icon")
-                    deleteButtonNode.addEventListener("click", () => {
-                        node.remove() // remove toggle elements from settings panel
-                        vm.map.layers.remove(geojsonlayer) // remove plotted data from map
-                        expandModify.style.display = "none"
-                        expandModify.innerHTML = "" // cleans div to prepare for another set of layer properties
-                        expandDefault.style.display = "block"
-
-                        // splice map out of data's maps array, then axios request to update in database
-                        let index = geospatial_data.maps.indexOf(vm.mapID)
-                        geospatial_data.maps.splice(index, 1)
-                        if (geospatial_data.maps.length == 0) {
-                            // if no more map links on data, remove the data from db
-                            vm.deleteData(geospatial_data.id)
-                        }
-                        else {
-                            // otherwise, just update db with updated map list
-                            axios({
-                                method: 'PUT',
-                                url: '/apis/v1/data/' + geospatial_data.id + '/',
-                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                data: {
-                                    maps: geospatial_data.maps,
-                                },
-                            })
-                            .catch(function (error) {
-                                console.log(error)
-                            })
-                        }
-                    })
-                    expandModify.appendChild(deleteButtonNode)
-                }
 
                 // renders geojson on map, creates html elements for visual changes Expand panel
                 // takes geospatial_data object which contains geojson
@@ -175,13 +83,13 @@ let vm = new Vue({
                     const geojsonlayer = new GeoJSONLayer({
                         url,
                     })
+                    let selectedRenderer
                     
                     // if renderer connected to both map and data is found, apply to layer
-                    let selectedRenderer
                     if (renderers) {
                         for (let renderer of renderers) {
                             if (renderer.linked_data_id == geospatial_data.id) {
-                                selectedRenderer = renderer
+                                selectedRenderer = renderer.renderer
                                 geojsonlayer.renderer = selectedRenderer
                             }
                         }
@@ -217,7 +125,130 @@ let vm = new Vue({
                     modifyButtonNode.setAttribute("aria-label", "close icon")
                     // modifyButtonNode.textContent='\ue61d' // todo: change text to gear symbol, same as expand
                     modifyButtonNode.addEventListener("click", (event) => {
-                        expandModifyPanel(event)
+                        let expandModify = document.getElementById("expand-modify")
+                        expandModify.style.display = "block"
+                        let expandDefault = document.getElementById("expand-default")
+                        expandDefault.style.display = "none"
+                        
+                        function createRenderer() {
+                            selectedRenderer = {
+                                type: "simple",
+                                symbol: {
+                                    type: "simple-marker",
+                                    color: colorSelection.value,
+                                }
+                            }
+                        }
+
+                        function updateRenderer() {
+                            geojsonlayer.renderer = selectedRenderer
+                            console.log('posted,displayed renderer:')
+                            console.log(selectedRenderer)
+                            axios({
+                                method: 'POST',
+                                url: '/apis/v1/renderer/',
+                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                data: {
+                                    renderer: selectedRenderer,
+                                    linked_data_id: geospatial_data.id,
+                                    linked_map_id: Number(vm.mapID),
+                                },
+                            })
+                        }
+
+                        // todo: add axios fn to update renderer in db when user hits return btn
+                        const returnButtonNode = document.createElement("span")
+                        returnButtonNode.classList.add("esri-icon-left")
+                        returnButtonNode.setAttribute("aria-label", "close icon")
+                        returnButtonNode.addEventListener("click", () => {
+                            expandModify.style.display = "none"
+                            expandModify.innerHTML = "" // cleans div to prepare for another set of layer properties
+                            expandDefault.style.display = "block"
+                        })
+                        expandModify.appendChild(returnButtonNode)
+
+                        const layerStyleHeaderNode = document.createElement("h3")
+                        layerStyleHeaderNode.textContent="Modify Style: " + event.target.parentNode.textContent
+                        expandModify.appendChild(layerStyleHeaderNode)
+
+                        const parameterUlNode = document.createElement("ul") // list of parameters displayed to edit
+                        parameterUlNode.classList.add("style-edit")
+                        expandModify.appendChild(parameterUlNode)
+
+                        // todo: add different cases depending on feature type; point, polygon, line
+                        function createAddColorSelector(id, paramenterName) { // takes element id and displayed name of parameter
+                            const parameterLiNode = document.createElement("li")
+                            const colorTextNode = document.createTextNode(paramenterName)
+                            const colorSelectNode = document.createElement("select")
+                            colorSelectNode.id = id
+                            colorSelectNode.value = "#FF0000"
+                            for (var i = 0; i < colorOptions.length; i++) {
+                                let option = document.createElement("option")
+                                option.value = colorOptions[i].hex
+                                option.style.backgroundColor = option.value
+                                option.text = colorOptions[i].name
+                                colorSelectNode.appendChild(option)
+                            parameterLiNode.appendChild(colorTextNode)}
+                            parameterLiNode.appendChild(colorSelectNode)
+                            parameterUlNode.appendChild(parameterLiNode)
+                        }
+
+                        createAddColorSelector("inner-color-selection", "Color")
+                        createAddColorSelector("border-color-selection", "Border Color")
+                        let colorSelection = document.getElementById("inner-color-selection")
+                        colorSelection.addEventListener('change', () => {
+                            if (typeof selectedRenderer === 'undefined'){ // if renderer doesn't exist, create it and add to layer
+                                createRenderer()
+                            }
+                            selectedRenderer.symbol.color = colorSelection.value
+                            updateRenderer()
+                        })
+                        let borderColorSelection = document.getElementById("border-color-selection")
+                        borderColorSelection.addEventListener('change', (event) => {
+                            if (typeof selectedRenderer === 'undefined'){ // if renderer doesn't exist, create it and add to layer
+                                createRenderer()
+                            }
+                            selectedRenderer.symbol.outline = {
+                                width: 0.5,
+                                color: borderColorSelection.value,
+                            }
+                            updateRenderer()
+                        })
+
+                        
+                        const deleteButtonNode = document.createElement("span")
+                        deleteButtonNode.classList.add("esri-icon-trash")
+                        deleteButtonNode.setAttribute("aria-label", "close icon")
+                        deleteButtonNode.addEventListener("click", () => {
+                            node.remove() // remove toggle elements from settings panel
+                            vm.map.layers.remove(geojsonlayer) // remove plotted data from map
+                            expandModify.style.display = "none"
+                            expandModify.innerHTML = "" // cleans div to prepare for another set of layer properties
+                            expandDefault.style.display = "block"
+    
+                            // splice map out of data's maps array, then axios request to update in database
+                            let index = geospatial_data.maps.indexOf(vm.mapID)
+                            geospatial_data.maps.splice(index, 1)
+                            if (geospatial_data.maps.length == 0) {
+                                // if no more map links on data, remove the data from db
+                                vm.deleteData(geospatial_data.id)
+                            }
+                            else {
+                                // otherwise, just update db with updated map list
+                                axios({
+                                    method: 'PUT',
+                                    url: '/apis/v1/data/' + geospatial_data.id + '/',
+                                    headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                    data: {
+                                        maps: geospatial_data.maps,
+                                    },
+                                })
+                                .catch(function (error) {
+                                    console.log(error)
+                                })
+                            }
+                        })
+                        expandModify.appendChild(deleteButtonNode)
                     })
                     node.appendChild(modifyButtonNode)
 

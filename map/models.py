@@ -28,8 +28,8 @@ class GeospatialData(models.Model):
         return self.title
 
 class Renderer(models.Model):
-    linked_map = models.ForeignKey(Map, related_name="renderer", on_delete=models.CASCADE, null=True, blank=True) # consider changing to protect
-    linked_data = models.ForeignKey(GeospatialData, related_name="renderer", on_delete=models.CASCADE, null=True, blank=True) # consider changing to protect
+    linked_map_id = models.ForeignKey(Map, related_name="renderer", on_delete=models.CASCADE, null=True, blank=True) # consider changing to protect
+    linked_data_id = models.ForeignKey(GeospatialData, related_name="renderer", on_delete=models.CASCADE, null=True, blank=True) # consider changing to protect
     # see link for renderer example https://developers.arcgis.com/javascript/latest/style-a-feature-layer/
     renderer = models.JSONField(null=True, blank=True,)
 
