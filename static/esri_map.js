@@ -137,6 +137,10 @@ let vm = new Vue({
                                     symbol: {
                                         type: "simple-marker",
                                         color: colorSelection.value,
+                                        outline: {
+                                            width: 0.5,
+                                            color: borderColorSelection.value,
+                                        }
                                     }
                                 }
                             }
@@ -205,6 +209,29 @@ let vm = new Vue({
                             parameterLiNode.appendChild(colorSelectNode)
                             parameterUlNode.appendChild(parameterLiNode)
                         }
+                        function createAddSlider(id, paramenterName) {
+                            const parameterLiNode = document.createElement("li")
+                            const colorTextNode = document.createTextNode(paramenterName)
+                            const sliderNode = document.createElement("div")
+                            sliderNode.id = id
+                            const slider = new Slider({
+                                container: sliderNode,
+                                min: 1,
+                                max: 10,
+                                values: [ 5 ],
+                            })
+                            // vm.testVar = slider.value
+                            slider.on(['thumb-change', 'thumb-drag'], function(event) {
+                                selectedRenderer.size = event.value
+                                geojsonlayer.renderer = selectedRenderer
+                                console.log(geojsonlayer.renderer)
+                                console.log(event.value)
+                            })
+                            parameterLiNode.appendChild(colorTextNode)
+                            parameterLiNode.appendChild(sliderNode)
+                            parameterUlNode.appendChild(parameterLiNode)
+                        }
+
                         function getColorNameFromHex(value) {
                             for (let color of colorOptions) {
                                 if (color.hex == value) {
@@ -233,12 +260,9 @@ let vm = new Vue({
                         let borderColorSelection = document.getElementById("border-color-selection")
                         borderColorSelection.addEventListener('change', (event) => {
                             if (typeof selectedRenderer === 'undefined'){ // if renderer doesn't exist, create it and add to layer
-                                createRenderer()
+                                createRenderer(geojson.features[0].geometry.type)
                             }
-                            selectedRenderer.symbol.outline = {
-                                width: 0.5,
-                                color: borderColorSelection.value,
-                            }
+                            selectedRenderer.symbol.outline.color = borderColorSelection.value
                             updateRenderer()
                         })
 
