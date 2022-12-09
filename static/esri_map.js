@@ -130,20 +130,33 @@ let vm = new Vue({
                         let expandDefault = document.getElementById("expand-default")
                         expandDefault.style.display = "none"
                         
-                        function createRenderer() {
-                            selectedRenderer = {
-                                type: "simple",
-                                symbol: {
-                                    type: "simple-marker",
-                                    color: colorSelection.value,
+                        function createRenderer(type) { // are any of these properties specific to points?
+                            if (type == "Point") {
+                                selectedRenderer = {
+                                    type: "simple",
+                                    symbol: {
+                                        type: "simple-marker",
+                                        color: colorSelection.value,
+                                    }
+                                }
+                            }
+                            else if (type == "Polygon") {
+                                selectedRenderer = {
+                                    type: "simple",
+                                    symbol: {
+                                        color: colorSelection.value,
+                                        type: "simple-fill",
+                                        outline: {
+                                            color: borderColorSelection.value,
+                                            width: 1,
+                                        }
+                                    },
                                 }
                             }
                         }
 
                         function updateRenderer() {
                             geojsonlayer.renderer = selectedRenderer
-                            console.log('posted,displayed renderer:')
-                            console.log(selectedRenderer)
                             axios({
                                 method: 'POST',
                                 url: '/apis/v1/renderer/',
@@ -176,29 +189,43 @@ let vm = new Vue({
                         expandModify.appendChild(parameterUlNode)
 
                         // todo: add different cases depending on feature type; point, polygon, line
-                        function createAddColorSelector(id, paramenterName) { // takes element id and displayed name of parameter
+                        function createAddColorSelector(id, paramenterName, defaultValueIndex) { // takes element id and displayed name of parameter
                             const parameterLiNode = document.createElement("li")
                             const colorTextNode = document.createTextNode(paramenterName)
                             const colorSelectNode = document.createElement("select")
                             colorSelectNode.id = id
-                            colorSelectNode.value = "#FF0000"
                             for (var i = 0; i < colorOptions.length; i++) {
                                 let option = document.createElement("option")
                                 option.value = colorOptions[i].hex
                                 option.style.backgroundColor = option.value
                                 option.text = colorOptions[i].name
                                 colorSelectNode.appendChild(option)
-                            parameterLiNode.appendChild(colorTextNode)}
+                                parameterLiNode.appendChild(colorTextNode)}
+                            colorSelectNode.selectedIndex = defaultValueIndex
                             parameterLiNode.appendChild(colorSelectNode)
                             parameterUlNode.appendChild(parameterLiNode)
                         }
-
-                        createAddColorSelector("inner-color-selection", "Color")
-                        createAddColorSelector("border-color-selection", "Border Color")
+                        function getColorNameFromHex(value) {
+                            for (let color of colorOptions) {
+                                if (color.hex == value) {
+                                    return colorOptions.indexOf(color)
+                                }
+                            }
+                        }
+                        if (selectedRenderer) {
+                            defaultInnerColorIndex = getColorNameFromHex(selectedRenderer.symbol.color)
+                            defaultBorderColorIndex = getColorNameFromHex(selectedRenderer.symbol.outline.color)
+                        }
+                        else {
+                            defaultInnerColorIndex = 0
+                            defaultBorderColorIndex = 0
+                        }
+                        createAddColorSelector("inner-color-selection", "Color", defaultInnerColorIndex)
+                        createAddColorSelector("border-color-selection", "Border Color", defaultBorderColorIndex)
                         let colorSelection = document.getElementById("inner-color-selection")
                         colorSelection.addEventListener('change', () => {
                             if (typeof selectedRenderer === 'undefined'){ // if renderer doesn't exist, create it and add to layer
-                                createRenderer()
+                                createRenderer(geojson.features[0].geometry.type)
                             }
                             selectedRenderer.symbol.color = colorSelection.value
                             updateRenderer()

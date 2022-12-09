@@ -19,5 +19,6 @@
 - add mapped data analysis section to map view page
     - basic text fields; notes, data comments, etc
     - allow user to create data visualization widgets
-
+- django sessions for user interaction/user hosting
+- web socket to allow for user to "host" a session
     

@@ -6,6 +6,8 @@
         - inner color
         - border color
         - shape?
+        - size
+        - border thickness
     - lines
         - inner color
         - border color
@@ -18,14 +20,11 @@
         - border thickness
         - border linetype?
 - add popup to check if user is sure that they want to remove data layer
-- create new model/serializer for map settings, similar to data model/serializer
 - add saved maps section to user profile, so users can easily return to other people's maps
     - toggle my maps, all saved maps - default all maps
-    - search function?? O_O
 - each new layer gets new color
-- ability to customize layer color
-    - customize point shape? customize polygon border/line linetype?
 - add notes field to geospatial data model; allow users to add notes that will be displayed
 - add view interaction buttons
     - set base view
         - add support for multiple views?
+- https://developers.arcgis.com/javascript/latest/visualization/location-styles/ for styling
