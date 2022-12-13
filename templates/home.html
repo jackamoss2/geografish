@@ -2,7 +2,9 @@
 
 {% block content %}
 
-homepage
-<a href="{% url 'map:create_map' %}">new map</a>
+<div id="main-body">
+    <button id="create-map" onclick="location.href = 'map/create'"><h1>Create Map</h1></button>
+</div>
+<script
 
 {% endblock content %}

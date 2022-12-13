@@ -5,12 +5,11 @@
 {% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
 <link rel="stylesheet" href="{% static 'main.css' %}">
 
-{% comment %} todo: fix stylesheet to prevent style application to entire webpage {% endcomment %}
 <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
 
 <div id="app">
-    Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
-    Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a>
+    {% comment %} Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
+    Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a> {% endcomment %}
     <div id="viewDiv"></div>
     <div id="rendererDiv" class="esri-widget">
         <div>

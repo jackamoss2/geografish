@@ -10,15 +10,14 @@
         - geografish api for uploaded data, customized interface from map edit view
         - script to combine apis
         - consider other map api; bing, geodjango, google, etc.
-- transform data types; geojson to GIS package
+- transform data types; geojson to shapefile and extensions
 - change visual theme - check imported stylesheet from esri
-- interactive display - toggle features
 - investigate GeoDjango, compare to ArcGIS API
 - print pdf of map
     - prints current view, legend of (visible?) layers below
 - add mapped data analysis section to map view page
     - basic text fields; notes, data comments, etc
     - allow user to create data visualization widgets
-- django sessions for user interaction/user hosting
+- django sessions for user interaction
 - web socket to allow for user to "host" a session
     
