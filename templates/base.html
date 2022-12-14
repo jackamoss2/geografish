@@ -20,6 +20,13 @@
             {% if map %}
             <h1>{{ map.title }}</h1>
             <h4><a href="{% url 'users:profile' map.author %}">Created by <u>{{ map.author }}</u></a></h4>
+            {% else %}
+            <ul class='nav-links'>
+                <li><a href="{% url 'map:home' %}">Home</a></li>
+                <li><a href="{% url 'map:about' %}">About</a></li>
+                <li><a href="{% url 'map:instructions' %}">Instructions</a></li>
+                <li><a href="{% url 'map:contact' %}">Contact</a></li>
+            </ul>
             {% endif %}
         </div>
         <div class="nav-right">
@@ -29,11 +36,20 @@
                 <p><a href="{% url 'logout' %}">Logout</a></p> {% endcomment %}
                 {% comment %} <p><a href="{% url 'posts:new' %}">+ New Blog Post</a></p> {% endcomment %}
             {% else %}
-                <p><a href="{% url 'login' %}">Login</a></p>
-                <p><a href="{% url 'users:register' %}">Sign Up</a></p>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'users:register' %}">Sign Up</a>
             {% endif %}
         </div>
     </header>
+    {% if map %}
+    {% else %}
+        <div id="fish-graphic">
+            <img
+                src="{% static 'fish_header.svg' %}"
+                alt="fish body outline"
+            />
+        </div>
+    {% endif %}
     <div id="main-container">
         {% block content %}
         {% endblock content %}

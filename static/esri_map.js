@@ -98,6 +98,11 @@ let vm = new Vue({
                     
                     // add visibility toggle html elements
                     const node = document.createElement("li") // "node" is the line containing html elements specific to this layer
+                    node.classList.add("customize-layer-li")
+                    const nodeDivLeft = document.createElement("div")
+                    node.appendChild(nodeDivLeft)
+                    const nodeDivRight = document.createElement("div")
+                    node.appendChild(nodeDivRight)
                     const visibilityButtonNode = document.createElement("input")
                     visibilityButtonNode.id = "layer-toggle"
                     visibilityButtonNode.type = "checkbox"
@@ -114,10 +119,10 @@ let vm = new Vue({
                     visibilityButtonNode.addEventListener("change", () => {
                         geojsonlayer.visible = visibilityButtonNode.checked
                     })
-                    node.appendChild(visibilityButtonNode)
+                    nodeDivLeft.appendChild(visibilityButtonNode)
 
                     const textNode = document.createTextNode(geojson.name)
-                    node.appendChild(textNode)
+                    nodeDivLeft.appendChild(textNode)
 
                     // modify layer display panel
                     const modifyButtonNode = document.createElement("span")
@@ -301,7 +306,7 @@ let vm = new Vue({
                         })
                         expandModify.appendChild(deleteButtonNode)
                     })
-                    node.appendChild(modifyButtonNode)
+                    nodeDivRight.appendChild(modifyButtonNode)
 
                     // todo: allow user to change data name
                     vm.layerToggles.appendChild(node)     

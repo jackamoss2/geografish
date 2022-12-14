@@ -1,11 +1,13 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
 
 {% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
+<link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
 <link rel="stylesheet" href="{% static 'main.css' %}">
 
-<link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
 
 <div id="app">
     {% comment %} Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
@@ -24,8 +26,10 @@
                         </li>
                     </template> {% endcomment %}
                 </ul>
+                <br>
                 <h3>Add New Layer</h3>
                 <input @change="readFile" type="file" accept=".geojson">
+                <br>
             </div>
             <div id="expand-modify" style="display: none">
             </div>
