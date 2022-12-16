@@ -18,25 +18,27 @@ let vm = new Vue({
     },
     methods: {
         loadMap: function(action, data=null, renderers=null,) {
-            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand",],
-            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand,) {
+            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand","esri/widgets/Slider",],
+            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand, Slider) {
                 let colorOptions = [
-                    {name:"Red",hex:"#FF0000"},
-                    {name:"Pink",hex:"#FFC0CB"},
-                    {name:"Magenta",hex:"#FF00FF"},
-                    {name:"Purple",hex:"#9B30FF"},
-                    {name:"Blue",hex:"#0000FF"},
-                    {name:'Turquoise',hex:"#00F5FF"},
-                    {name:'Steel Blue',hex:"#4682B4"},
-                    {name:'Lime Green',hex:"#00FF00"},
-                    {name:'Forest Green',hex:"#228B22"},
-                    {name:'Yellow',hex:"#FFFF00"},
-                    {name:"Goldenrod",hex:"#DAA520"},
-                    {name:'Brick',hex:"#9C661F"},
-                    {name:'Black',hex:"#000000"},
-                    {name:'Dark Gray',hex:"#5B5B5B"},
-                    {name:'Light Gray',hex:"#C1C1C1"},
-                    {name:'White',hex:"#FFFFFF"},
+                    {name:"Orange",rgba:'rgba(255, 120, 0, 1)'},
+                    {name:"Burnt Orange",rgba:'rgba(204, 85, 0, 1)'},
+                    {name:"Red",rgba:'rgba(255, 0, 0, 1)'},
+                    {name:"Pink",rgba:'rgba(255, 192, 203, 1)'},
+                    {name:"Magenta",rgba:'rgba(255, 0, 255, 1)'},
+                    {name:"Purple",rgba:'rgba(155, 48, 255, 1)'},
+                    {name:"Blue",rgba:'rgba(0, 0, 255, 1)'},
+                    {name:'Turquoise',rgba:'rgba(0, 245, 255, 1)'},
+                    {name:'Steel Blue',rgba:'rgba(70, 130, 180, 1)'},
+                    {name:'Lime Green',rgba:'rgba(0, 255, 0, 1)'},
+                    {name:'Forest Green',rgba:'rgba(34, 139, 34, 1)'},
+                    {name:'Yellow',rgba:'rgba(255, 255, 0, 1)'},
+                    {name:"Goldenrod",rgba:'rgba(218, 165, 32, 1)'},
+                    {name:'Brick',rgba:'rgba(156, 102, 31, 1)'},
+                    {name:'Black',rgba:'rgba(0, 0, 0, 1)'},
+                    {name:'Dark Gray',rgba:'rgba(91, 91, 91, 1)'},
+                    {name:'Light Gray',rgba:'rgba(193, 193, 193, 1)'},
+                    {name:'White',rgba:'rgba(255, 255, 255, 1)'},
                 ]
                 
                 if (action == 'initiate') {
@@ -67,10 +69,54 @@ let vm = new Vue({
                     
                     vm.view.ui.add(expand, "top-right");
                 }
-
+                
                 // renders geojson on map, creates html elements for visual changes Expand panel
                 // takes geospatial_data object which contains geojson
                 const createAddGeoJsonLayer = (geospatial_data, visibility=true) => {
+                    function createRenderer(type) {
+                        if (type == "Point") {
+                            selectedRenderer = {
+                                type: "simple",
+                                symbol: {
+                                    type: "simple-marker",
+                                    color: colorOptions[0].rgba,
+                                    outline: {
+                                        width: 0.5,
+                                        color: colorOptions[colorOptions.length-4].rgba,
+                                    }
+                                }
+                            }
+                        }
+                        else if (type == "Polygon") {
+                            selectedRenderer = {
+                                type: "simple",
+                                symbol: {
+                                    color: colorOptions[0].rgba,
+                                    type: "simple-fill",
+                                    // todo: add transparency
+                                    outline: {
+                                        color: colorOptions[colorOptions.length-1].rgba,
+                                        width: 1,
+                                    }
+                                },
+                            }
+                        }
+                    }
+                    function updateRenderer() {
+                        geojsonlayer.renderer = selectedRenderer
+                        axios({
+                            method: 'POST',
+                            url: '/apis/v1/renderer/',
+                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                            data: {
+                                renderer: selectedRenderer,
+                                linked_data_id: geospatial_data.id,
+                                linked_map_id: Number(vm.mapID),
+                            },
+                        })
+                    }
+                    let selectedRenderer
+
                     // create arcgis objects and add to map
                     geojson = geospatial_data.geospatial_data
                     // if (geojson == undefined) {
@@ -83,7 +129,6 @@ let vm = new Vue({
                     const geojsonlayer = new GeoJSONLayer({
                         url,
                     })
-                    let selectedRenderer
                     
                     // if renderer connected to both map and data is found, apply to layer
                     if (renderers) {
@@ -93,6 +138,10 @@ let vm = new Vue({
                                 geojsonlayer.renderer = selectedRenderer
                             }
                         }
+                    }
+                    if (!geojsonlayer.renderer) {
+                        createRenderer(geojson.features[0].geometry.type)
+                        updateRenderer()
                     }
                     vm.map.layers.add(geojsonlayer)      
                     
@@ -120,9 +169,18 @@ let vm = new Vue({
                         geojsonlayer.visible = visibilityButtonNode.checked
                     })
                     nodeDivLeft.appendChild(visibilityButtonNode)
-
-                    const textNode = document.createTextNode(geojson.name)
+                    let textNode
+                    if (geojson.name.length >= 30) {
+                        const nameSplit = geojson.name.split('')
+                        nameSplit.splice(27, geojson.name.length-27)
+                        const newName = nameSplit.join('') + '...'
+                        textNode = document.createTextNode(newName)
+                    }
+                    else {
+                         textNode = document.createTextNode(geojson.name)
+                    }
                     nodeDivLeft.appendChild(textNode)
+                    
 
                     // modify layer display panel
                     const modifyButtonNode = document.createElement("span")
@@ -135,48 +193,7 @@ let vm = new Vue({
                         let expandDefault = document.getElementById("expand-default")
                         expandDefault.style.display = "none"
                         
-                        function createRenderer(type) { // are any of these properties specific to points?
-                            if (type == "Point") {
-                                selectedRenderer = {
-                                    type: "simple",
-                                    symbol: {
-                                        type: "simple-marker",
-                                        color: colorSelection.value,
-                                        outline: {
-                                            width: 0.5,
-                                            color: borderColorSelection.value,
-                                        }
-                                    }
-                                }
-                            }
-                            else if (type == "Polygon") {
-                                selectedRenderer = {
-                                    type: "simple",
-                                    symbol: {
-                                        color: colorSelection.value,
-                                        type: "simple-fill",
-                                        outline: {
-                                            color: borderColorSelection.value,
-                                            width: 1,
-                                        }
-                                    },
-                                }
-                            }
-                        }
 
-                        function updateRenderer() {
-                            geojsonlayer.renderer = selectedRenderer
-                            axios({
-                                method: 'POST',
-                                url: '/apis/v1/renderer/',
-                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                data: {
-                                    renderer: selectedRenderer,
-                                    linked_data_id: geospatial_data.id,
-                                    linked_map_id: Number(vm.mapID),
-                                },
-                            })
-                        }
 
                         // todo: add axios fn to update renderer in db when user hits return btn
                         const returnButtonNode = document.createElement("span")
@@ -198,55 +215,82 @@ let vm = new Vue({
                         expandModify.appendChild(parameterUlNode)
 
                         // todo: add different cases depending on feature type; point, polygon, line
-                        function createAddColorSelector(id, paramenterName, defaultValueIndex) { // takes element id and displayed name of parameter
+                        function createAddColorSelector(id, paramenterName, defaultValueIndex,) { // takes element id and displayed name of parameter
                             const parameterLiNode = document.createElement("li")
-                            const colorTextNode = document.createTextNode(paramenterName)
+                            parameterLiNode.classList.add("customize-layer-li")
+                            const colorTextPNode = document.createElement("p")
+                            colorTextPNode.classList.add("color-label")
+                            colorTextPNode.innerHTML = paramenterName
                             const colorSelectNode = document.createElement("select")
+                            colorSelectNode.classList.add("color-dropdown")
                             colorSelectNode.id = id
+                            colorOptions = colorOptions
                             for (var i = 0; i < colorOptions.length; i++) {
                                 let option = document.createElement("option")
-                                option.value = colorOptions[i].hex
+                                option.value = colorOptions[i].rgba
                                 option.style.backgroundColor = option.value
                                 option.text = colorOptions[i].name
                                 colorSelectNode.appendChild(option)
-                                parameterLiNode.appendChild(colorTextNode)}
+                                parameterLiNode.appendChild(colorTextPNode)}
                             colorSelectNode.selectedIndex = defaultValueIndex
                             parameterLiNode.appendChild(colorSelectNode)
                             parameterUlNode.appendChild(parameterLiNode)
                         }
-                        function createAddSlider(id, paramenterName) {
+                    
+                        // redo entire function; doesn't dynamically work with color selection
+                        function createAddSlider(id, paramenterName) { // need to rafactor fn: can't be repeated for other parameters
                             const parameterLiNode = document.createElement("li")
+                            parameterLiNode.classList.add("slider")
                             const colorTextNode = document.createTextNode(paramenterName)
                             const sliderNode = document.createElement("div")
                             sliderNode.id = id
                             const slider = new Slider({
                                 container: sliderNode,
-                                min: 1,
-                                max: 10,
-                                values: [ 5 ],
+                                min: 0,
+                                max: 1,
+                                values: [ 1 ],
                             })
-                            // vm.testVar = slider.value
+
+                            let currentColor, currentColorStrPre, sliderValue
+                            
                             slider.on(['thumb-change', 'thumb-drag'], function(event) {
-                                selectedRenderer.size = event.value
+                                currentColor = selectedRenderer.symbol.color
+                                let j = 0
+                                for (var i = 0; i < currentColor.length; i++) {
+                                    if (currentColor[i] == ',') {
+                                        j++
+                                        if (j == 3) { // only triggers once with rgba string
+                                            currentColorStrPre = currentColor.substring(0,i+1) // gets string up to alpha value
+                                            j = 0
+                                        }
+                                    }
+                                }
+                                // console.log(currentColorStrPre)
+                                sliderValue = event.value
+                                currentColor = currentColorStrPre + sliderValue.toString() + ')'
+                                selectedRenderer.symbol.color = currentColor
                                 geojsonlayer.renderer = selectedRenderer
-                                console.log(geojsonlayer.renderer)
-                                console.log(event.value)
                             })
                             parameterLiNode.appendChild(colorTextNode)
                             parameterLiNode.appendChild(sliderNode)
                             parameterUlNode.appendChild(parameterLiNode)
                         }
 
-                        function getColorNameFromHex(value) {
+                        function getColorNameFromrgba(value) {
+                            let valueTransparent = value.split('')
+                            valueTransparent.splice(valueTransparent.length-4,4)
+                            valueTransparent = valueTransparent.join('') + '1)'
+
                             for (let color of colorOptions) {
-                                if (color.hex == value) {
+
+                                if (color.rgba == value || color.rgba == valueTransparent) {
                                     return colorOptions.indexOf(color)
                                 }
                             }
                         }
                         if (selectedRenderer) {
-                            defaultInnerColorIndex = getColorNameFromHex(selectedRenderer.symbol.color)
-                            defaultBorderColorIndex = getColorNameFromHex(selectedRenderer.symbol.outline.color)
+                            defaultInnerColorIndex = getColorNameFromrgba(selectedRenderer.symbol.color)
+                            defaultBorderColorIndex = getColorNameFromrgba(selectedRenderer.symbol.outline.color)
                         }
                         else {
                             defaultInnerColorIndex = 0
@@ -259,7 +303,15 @@ let vm = new Vue({
                             if (typeof selectedRenderer === 'undefined'){ // if renderer doesn't exist, create it and add to layer
                                 createRenderer(geojson.features[0].geometry.type)
                             }
-                            selectedRenderer.symbol.color = colorSelection.value
+                            if (geojson.features[0].geometry.type == "Polygon") {
+                                transparentColor = colorSelection.value.split('')
+                                transparentColor.splice(transparentColor.length-2,2)
+                                transparentColor = transparentColor.join('') + '0.5)'
+                                selectedRenderer.symbol.color = transparentColor
+                            }
+                            else {
+                                selectedRenderer.symbol.color = colorSelection.value
+                            }
                             updateRenderer()
                         })
                         let borderColorSelection = document.getElementById("border-color-selection")
@@ -270,6 +322,8 @@ let vm = new Vue({
                             selectedRenderer.symbol.outline.color = borderColorSelection.value
                             updateRenderer()
                         })
+                        // createAddSlider(id="transparencySlider", paramenterName="Transparency")
+
 
                         
                         const deleteButtonNode = document.createElement("span")

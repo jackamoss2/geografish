@@ -1,49 +1,90 @@
 
-
-{% extends 'base.html' %}
 {% load static %}
-{% block content %}
-
-{% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
-<link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
-<link rel="stylesheet" href="{% static 'main.css' %}">
-
-
-<div id="app">
-    {% comment %} Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
-    Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a> {% endcomment %}
-    <div id="viewDiv"></div>
-    <div id="rendererDiv" class="esri-widget">
-        <div>
-            <div id="expand-default">
-                <h3>Layers</h3>
-                <p v-if="dataLayers.length === 0">No data has been added to this map.</p>
-                <ul id="layerToggles">
-                    {% comment %} <template v-for="layer in dataLayers">
-                        <li>
-                            <input id="layer-toggle" type="checkbox" @change="toggleLayerVisibility()">
-                            <p>{& layer.title &}</p>
-                        </li>
-                    </template> {% endcomment %}
-                </ul>
-                <br>
-                <h3>Add New Layer</h3>
-                <input @change="readFile" type="file" accept=".geojson">
-                <br>
-            </div>
-            <div id="expand-modify" style="display: none">
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeograFish</title>
+    <script src="https://kit.fontawesome.com/16dc714234.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=EB+Garamond|Libre+Franklin&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
+    <link rel="stylesheet" href="{% static 'css/map_view.css' %}">
+</head>
+<body>
+    <header class="header-main">
+        <div class="nav-left">
+            <h3><a href="{% url 'map:home' %}">GeograFish</a></h3>
         </div>
+        <div class="nav-center">
+            <h1>{{ map.title }}</h1>
+            <h4><a href="{% url 'users:profile' map.author %}">Created by <u>{{ map.author }}</u></a></h4>
+        </div>
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+            <h2><a href="{% url 'users:profile' user.username %}"><i class="fa-solid fa-user"></i></a></h2>
+            {% comment %} <p>Hey, <a href="{% url 'users:profile' user.username %}">{{ user.username}}</a>!</p>
+            <p><a href="{% url 'logout' %}">Logout</a></p> {% endcomment %}
+            {% comment %} <p><a href="{% url 'posts:new' %}">+ New Blog Post</a></p> {% endcomment %}
+            {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'users:register' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </header>
+    {% if map %}
+    {% else %}
+    <div id="fish-graphic">
+        <img
+        src="{% static 'fish_header.svg' %}"
+        alt="fish body outline"
+        />
     </div>
-    <input value="{{ map.id }}" type="hidden" id="map-id">
-</div>
-
-<!-- Vue -->
-<script src="https://unpkg.com/vue@2"></script>
-<!-- Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
-
-<script src="https://js.arcgis.com/4.25/"></script>
-<script src="{% static 'esri_map.js' %}"></script>
-
-{% endblock content %}
+    {% endif %}
+    <div id="main-container">
+        {% comment %} todo: create app.js to display map- axios to retrieve data from db {% endcomment %}
+        <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
+        <link rel="stylesheet" href="{% static 'map_view.css' %}">
+        
+        
+        <div id="app">
+            {% comment %} Map Title: <input type="text" id="mapViewTitle" placeholder="{{ map.title }}" v-model="mapTitle" @change="changeMapName"> 
+            Author: <a href="{% url 'users:profile' map.author %}">{{ map.author }}</a> {% endcomment %}
+            <div id="viewDiv"></div>
+            <div id="rendererDiv" class="esri-widget">
+                <div>
+                    <div id="expand-default">
+                        <h3>Layers</h3>
+                        <p v-if="dataLayers.length === 0">No data has been added to this map.</p>
+                        <ul id="layerToggles">
+                            {% comment %} <template v-for="layer in dataLayers">
+                                <li>
+                                    <input id="layer-toggle" type="checkbox" @change="toggleLayerVisibility()">
+                                    <p>{& layer.title &}</p>
+                                </li>
+                            </template> {% endcomment %}
+                        </ul>
+                        <br>
+                        <h3>Add New Layer</h3>
+                        <input @change="readFile" type="file" accept=".geojson">
+                        <br v-if="dataLayers.length !== 0">
+                    </div>
+                    <div id="expand-modify" style="display: none">
+                    </div>
+                </div>
+            </div>
+            <input value="{{ map.id }}" type="hidden" id="map-id">
+        </div>
+        
+        <!-- Vue -->
+        <script src="https://unpkg.com/vue@2"></script>
+        <!-- Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+        
+        <script src="https://js.arcgis.com/4.25/"></script>
+        
+        <script src="{% static 'esri_map.js' %}"></script>
+    </div>
+</body>
+</html>

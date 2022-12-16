@@ -1,20 +1,9 @@
 # to do
-- css homepage
-    - make home landing page dependant on if logged in or not
-    - mobile first design
-        - mobile size hides/disables modification elements
-    - homepage design:
-        1. narrow body div
-        2. header color background on sides
-        3. shadow on body div
-        4. more if scroll down, basic info and instructions with links to other pages
-- add about page
-- add contact page
-- add instructions(?) page
+- fix horizontal scroll bar
 - style map view and homepage different from others
 - choose better color combinations for colors list
     - google complimentary color set
-- last, revisit sliders, point size
+- revisit sliders, point size
     
 # to do... eventually
 - improve layer display customization

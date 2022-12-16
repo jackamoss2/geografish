@@ -12,28 +12,28 @@ ul {
   padding: 0;
 }
 
-header {
+.header-main {
   width: 100%;
   background: #222222;
   color: white;
   display:flex;
   flex-wrap: nowrap;
   position: relative;
-  height: 90.5px;
+  height: 72px;
 }
 
-header > div {
+.header-main > div {
   width: 33.33%;
-  padding: 16px;
+  padding: 4px;
 }
 
-header h1 {
+.header-main h1 {
   margin:0;
-  margin-top: 8px;
+  /* margin-top: 8px; */
   padding: 0px;
 }
 
-header a {
+.header-main a {
   color:white;
   text-decoration: none;
 }
@@ -41,6 +41,7 @@ header a {
 .nav-left {
   /* margin-right: auto; */
   /* margin:0px; */
+  margin: 12px 20px;
   text-align: left;
 }
 .nav-center {
@@ -58,11 +59,20 @@ header a {
 .nav-right {
   /* display: flex; */
   text-align: right;
+  margin:4px;
 }
 
 .nav-right * {
   padding: 7.5px;
 }
+
+.customize-layer-li {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  max-height: 2rem;
+}
+
 
 .esri-icon-edit, .esri-icon-left, .esri-icon-trash {
   cursor: pointer;
@@ -75,16 +85,25 @@ header a {
   border-radius: 3px;
 }
 
-.style-edit * {
-  padding: 3px;
+.slider {
+  padding-bottom: 32px;
 }
 
-#main-container {
-  height: 100%;
-  flex-grow: 1;
-  flex-direction: column;
-  display: flex;
+.style-edit * {
+  padding-top: 3px;
 }
+
+.color-label {
+  margin:0;
+}
+
+#expand-default ul,h3,input {
+  padding-top: 6px;
+}
+/* 
+#expand-modify span,ul,h3 {
+  margin-top:6px;
+} */
 
 #app {
   height: 100%;
@@ -94,37 +113,7 @@ header a {
 }
 
 #viewDiv {
-  height: 100%;
   flex-grow: 1;
-}
-
-#mobile-home {
-  background-image:url("../map_blur_background.jpeg");
-  display: none;
-}
-
-#home {
-  width: 100vw;
-  display: flex;
-  padding-top: 50px;
-  background:#333333;
-}
-
-
-#main-body {
-  background-image:url("../map_blur_background.jpeg");
-  padding:0;
-  margin:0;
-  width:calc(100% - 100px);
-  margin:auto;
-  height:480px;
-  box-shadow: 0 10px 16px 0 rgb(0, 0, 0),0 6px 20px 0 rgb(0, 0, 0);
-  display:flex;
-  flex-direction: column;
-  position: relative;
-}
-
-#viewDiv {
   padding: 0;
   margin: 0;
   height: 100%;
@@ -136,24 +125,12 @@ header a {
   width: 280px;
 }
 
-#create-map {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  border-color: #CC5500;
-  border-radius: 35px;
-  background-color: #CC5500;
-  color:white;
-  border-style: solid;
-  cursor: pointer;
-  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5)
-}
-
-#create-map * {
-  padding: 1rem;
-  margin:0;
+#main-container {
+  height: 100%;
+  flex-grow: 1;
+  flex-direction: column;
+  display: flex;
+  position: relative;
 }
 
 @media (min-width: 670px) {
