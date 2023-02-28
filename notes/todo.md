@@ -1,0 +1,33 @@
+# to do
+- fix horizontal scroll bar
+- style map view and homepage different from others
+- choose better color combinations for colors list
+    - google complimentary color set
+- revisit sliders, point size
+    
+# to do... eventually
+- improve layer display customization
+    - utilize createSlider function
+    - points
+        - shape
+        - size
+        - border thickness
+    - lines
+        - inner color
+        - border color
+        - thickness
+        - linetype
+    - polygons
+        - transparency
+        - border thickness
+        - border linetype
+- add "copy" button to map settings, allows user to make a new map that's a copy of all layers, settings
+- add popup to check if user is sure that they want to trash data layer
+- add saved maps section to user profile, so users can easily return to other people's maps
+    - toggle my maps, all saved maps - default all maps
+- each new layer gets new color
+- add notes field to geospatial data model; allow users to add notes that will be displayed
+- add view interaction buttons
+    - set base view
+        - add support for multiple views?
+- https://developers.arcgis.com/javascript/latest/visualization/location-styles/ for styling

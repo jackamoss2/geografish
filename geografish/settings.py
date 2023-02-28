@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-*)q+d3p)tp1m!df@&mmrs55w_al68=dr&0^)&nh4@8z%dzt=xp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['django-env.eba-xbubngae.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -135,3 +135,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'map:home'
 LOGOUT_REDIRECT_URL = 'map:home'
+
+import django_on_heroku
+django_on_heroku.settings(locals())
