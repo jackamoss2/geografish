@@ -31,7 +31,7 @@
         </div>
         <div class="nav-right">
             {% if user.is_authenticated %}
-            <h2><a href="{% url 'users:profile' user.username %}"><i class="fa-solid fa-user"></i></a></h2>
+            <h2><a href="{% url 'users:profile' user.username %}"><img src="{% static 'user-solid.svg' %}" id="profile-icon"></a></h2>
                 {% comment %} <p>Hey, <a href="{% url 'users:profile' user.username %}">{{ user.username}}</a>!</p>
                 <p><a href="{% url 'logout' %}">Logout</a></p> {% endcomment %}
                 {% comment %} <p><a href="{% url 'posts:new' %}">+ New Blog Post</a></p> {% endcomment %}

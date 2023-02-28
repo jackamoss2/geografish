@@ -1,8 +1,8 @@
 # to do
-- fix horizontal scroll bar
-- style map view and homepage different from others
-- choose better color combinations for colors list
-    - google complimentary color set
+- turn off django dev view
+- turn off vue dev view
+- fix font loading late
+- add loading symbol to map when loading in data
 - revisit sliders, point size
     
 # to do... eventually

@@ -12,8 +12,11 @@
         <h1>User Profile: {{ profile.username }}</h1>
         {% comment %} <h5><em>joined {{ profile.date_joined }}</em></h5> {% endcomment %}
         <p><a href="{% url 'logout' %}">Logout</a></p>
+        <hr>
+        <br>
         <div>
             <h3>Authored Maps</h3>
+            <br>
             <ul>
             {% for map in profile.maps.all %}
                 <li><a href="{% url 'map:view_map' map.url_code %}">{{ map.title }}</a></li>

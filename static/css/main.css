@@ -235,6 +235,11 @@ footer {
   text-shadow: 10px 10px 10px white;
 }
 
+#profile-icon {
+  width:24px;
+  color:white;
+}
+
 #create-map {
   border-color: #ff8400;
   border-radius: 35px;

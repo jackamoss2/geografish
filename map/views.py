@@ -15,10 +15,9 @@ def create_map(request):
     if request.user.is_authenticated:
         map = Map(title='untitled',url_code=code,author=request.user)
         map.save()
-        url = f'http://{request_path}/map/' + code
-        print(f'url: {url}')
+        url = f'https://{request_path}/map/' + code
     else: # todo: allow anonymous user to create temp map, nothing is saved
-        url = 'http://localhost:8000/users/login/'
+        url = f'https://{request_path}/users/login/'
     return HttpResponseRedirect(url)
     
 
