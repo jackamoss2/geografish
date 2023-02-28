@@ -16,7 +16,7 @@ def create_map(request):
         map.save()
         url = 'http://localhost:8000/map/' + code
     else: # todo: allow anonymous user to create temp map, nothing is saved
-        url = 'http://localhost:8000/users/register/'
+        url = 'http://localhost:8000/users/login/'
     return HttpResponseRedirect(url)
     
 

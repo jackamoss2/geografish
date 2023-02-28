@@ -383,10 +383,17 @@ let vm = new Vue({
         },
         readFile(event) {
             const file = event.target.files[0]
+            const fileName = event.target.files[0].name
+            console.log(fileName)
             const reader = new FileReader()
             reader.onload = e => {
                 let contents = e.target.result
                 geojson = JSON.parse(contents)
+                
+                if (geojson.name == undefined) {
+                    geojson.name = fileName
+                }
+
                 this.uploadData(geojson)
             }
             reader.readAsText(file)
