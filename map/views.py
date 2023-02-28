@@ -9,12 +9,14 @@ def home(request):
     return render(request, 'home.html')
 
 def create_map(request):
+    request_path = request.META.get('HTTP_HOST')
     chars = string.ascii_letters + string.digits
     code = ''.join([chars[random.randint(0, len(chars)-1)] for _ in range(16)])
     if request.user.is_authenticated:
         map = Map(title='untitled',url_code=code,author=request.user)
         map.save()
-        url = 'http://localhost:8000/map/' + code
+        url = f'http://{request_path}/map/' + code
+        print(f'url: {url}')
     else: # todo: allow anonymous user to create temp map, nothing is saved
         url = 'http://localhost:8000/users/login/'
     return HttpResponseRedirect(url)
