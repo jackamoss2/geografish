@@ -67,7 +67,7 @@
                         </ul>
                         <br>
                         <h3>Add New Layer</h3>
-                        <input @change="readFile" type="file" accept=".geojson .json">
+                        <input @change="readFile" type="file" accept=".geojson, .json">
                         <br v-if="dataLayers.length !== 0">
                     </div>
                     <div id="expand-modify" style="display: none">
