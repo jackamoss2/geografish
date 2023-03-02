@@ -28,7 +28,7 @@ DEBUG = False
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.9/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -140,4 +140,4 @@ LOGIN_REDIRECT_URL = 'map:home'
 LOGOUT_REDIRECT_URL = 'map:home'
 
 import django_on_heroku
-django_on_heroku.settings(locals(), allowed_hosts=False)
+django_on_heroku.settings(locals())
