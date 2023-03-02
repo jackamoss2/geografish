@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*)q+d3p)tp1m!df@&mmrs55w_al68=dr&0^)&nh4@8z%dzt=xp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -140,4 +140,4 @@ LOGIN_REDIRECT_URL = 'map:home'
 LOGOUT_REDIRECT_URL = 'map:home'
 
 import django_on_heroku
-django_on_heroku.settings(locals())
+django_on_heroku.settings(locals(), allowed_hosts=False)

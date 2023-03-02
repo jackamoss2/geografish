@@ -3,8 +3,16 @@
 {% block content %}
 <div class="standard-back">
     <div class="standard-main">
-        <h1>How to use GeograFish</h1>
-        <p>There's nothing here yet.</p>
+        <h1>How to use GeograFish to make a map</h1>
+        <p>Note: At this time, you can only upload small .geojson (or .json) files. Other data formats are not supported.</p>
+        <ol>
+            <li><a href="{% url 'users:register' %}" class="link-underline">Create an account</a></li>
+            <li><a href="{% url 'map:create_map' %}" class="link-underline">Create a map</a></li>
+            <li>Upload some data</li>
+            <span>Some sources: <a href="https://cartographyvectors.com/" class="link-underline">Cartograhy Vectors</a>, <a href="https://gis-pdx.opendata.arcgis.com/" class="link-underline">PortlandMaps Open Data</a></span>
+            <li>Customize the data layers visual appearance</li>
+            <li>Share the map by copy and pasting the URL, or view your created maps on your user profile</li>
+        </ol>
     </div>
 </div>
 {% endblock content %}
