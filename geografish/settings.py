@@ -23,9 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*)q+d3p)tp1m!df@&mmrs55w_al68=dr&0^)&nh4@8z%dzt=xp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['django-env.eba-xbubngae.us-west-2.elasticbeanstalk.com']
+
+# Hosts/domain names that are valid for this site; required if DEBUG is False
+# See https://docs.djangoproject.com/en/1.9/ref/settings/#allowed-hosts
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
