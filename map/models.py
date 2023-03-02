@@ -8,6 +8,7 @@ class Map(models.Model):
     author = models.ForeignKey('auth.User', related_name="maps", on_delete=models.CASCADE, null=True, blank=True) # consider changing to protect
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    default_view = models.JSONField(null=True, blank=True,)
     # data = the set(s) of data associated with the map
     # todo: add data 
     # todo: add map view settings foreign key

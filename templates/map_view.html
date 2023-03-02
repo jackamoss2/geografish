@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeograFish</title>
-    <script src="https://kit.fontawesome.com/16dc714234.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=EB+Garamond|Libre+Franklin&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css"> 
     <link rel="stylesheet" href="{% static 'css/map_view.css' %}">
@@ -68,6 +67,10 @@
                         <br>
                         <h3>Add New Layer</h3>
                         <input @change="readFile" type="file" accept=".geojson, .json">
+                        <br>
+                        <br>
+                        <button type="button" id="set-default-view">Set Default View</button> 
+                        {% comment %} <h3 id="set-default-view">Set Default View</h3> {% endcomment %}
                         <br v-if="dataLayers.length !== 0">
                     </div>
                     <div id="expand-modify" style="display: none">

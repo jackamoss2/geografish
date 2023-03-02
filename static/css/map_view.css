@@ -97,6 +97,7 @@ ul {
   margin:0;
 }
 
+
 #expand-default ul,h3,input {
   padding-top: 6px;
 }
@@ -133,10 +134,24 @@ ul {
   position: relative;
 }
 
-@media (min-width: 670px) {
+/* #set-default-view {
+  border-radius: 8px;
+  border-color:black;
+  border-style: solid;
+  border-width: 1px;
+  background-color: rgb(220, 220, 220);
+  padding:4px;
+  width: 140px;
+}
 
+#set-default-view:hover {
+  cursor: pointer;
+} */
+
+@media (min-width: 670px) {
+  
 }
 
 @media (min-width: 820px) {
-
+  
 }

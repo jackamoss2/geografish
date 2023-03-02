@@ -20,8 +20,8 @@ let vm = new Vue({
     },
     methods: {
         loadMap: function(action, data=null, renderers=null,) {
-            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand","esri/widgets/Slider",],
-            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand, Slider) {
+            require(["esri/config","esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/layers/GeoJSONLayer","esri/widgets/Expand","esri/widgets/Slider","esri/geometry/support/webMercatorUtils"],
+            function(esriConfig, Map, MapView, Graphic, GraphicsLayer, GeoJSONLayer, Expand, Slider, webMercatorUtils) {
                 let colorOptions = [
                     {name:"Orange",rgba:'rgba(255, 120, 0, 1)'},
                     {name:"Burnt Orange",rgba:'rgba(204, 85, 0, 1)'},
@@ -48,28 +48,76 @@ let vm = new Vue({
                     vm.map = new Map({
                         basemap: "arcgis-topographic" // Basemap layer service
                     })
-                    vm.view = new MapView({
-                        map: vm.map,
-                        center: [-122.6784,45.5152], // long, lat
-                        zoom: 9,
-                        container: "viewDiv", // Div element
-                        constraints: {
-                            maxScale: 35000
-                        },
+
+                    // check to see if custom default view has been set
+                    axios({
+                        method: 'GET',
+                        url: '/apis/v1/maps/' + vm.mapID + '/',
+                        headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
                     })
-                    vm.view.popup.defaultPopupTemplateEnabled = true
-                    
-                    const expand = new Expand({
-                        view: vm.view,
-                        content: document.getElementById("rendererDiv"),
-                        expanded: true,
-                        expandIconClass: "esri-icon-layers",
+                    .then(function (response) {
+                        var viewExtent = null
+                        if (response.data.default_view) {
+                            viewExtent = response.data.default_view
+                        }
+                        else { // if no custom default view found, apply standard standard default view
+                            viewExtent = {
+                                center: [-122.6784,45.5152], // long, lat
+                                zoom: 9,
+                            }
+                        }
+                        vm.view = new MapView({
+                            map: vm.map,
+                            center: viewExtent.center,
+                            zoom: viewExtent.zoom,
+                            container: "viewDiv", // Div element
+                            constraints: {
+                                maxScale: 35000
+                            },
+                        })
+
+                        vm.view.popup.defaultPopupTemplateEnabled = true
                         
-                        // container: document.getElementById("viewDiv"),
-                        mode: "floating",
+                        const expand = new Expand({
+                            view: vm.view,
+                            content: document.getElementById("rendererDiv"),
+                            expanded: true,
+                            expandIconClass: "esri-icon-layers",
+                            
+                            // container: document.getElementById("viewDiv"),
+                            mode: "floating",
+                        })
+                        vm.view.ui.add(expand, "top-right");
                     })
-                    
-                    vm.view.ui.add(expand, "top-right");
+
+
+                    // adds functionality for set view button
+                    setDefaultViewButton = document.getElementById("set-default-view")
+                    setDefaultViewButton.addEventListener("click", (event) => {
+                        const zoom = vm.view.zoom
+                        const centerObject = webMercatorUtils.webMercatorToGeographic(vm.view.center) // convert from webMercator default units (meters?) to geographic
+                        const center = [centerObject.x, centerObject.y]
+                        const newViewExtent = { // new default view parameters
+                            center: center,
+                            zoom: zoom,
+                        }
+                        console.log(newViewExtent)
+
+                        // updates map object in DB with new default view params
+                        axios({
+                            method: 'GET',
+                            url: '/apis/v1/maps/' + vm.mapID + '/',
+                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                        }).then(response => {
+                            response.data.default_view = newViewExtent
+                            axios({
+                                method: 'PUT',
+                                url: '/apis/v1/maps/' + vm.mapID + '/',
+                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                data: response.data
+                            })
+                        })
+                    })
                 }
                 
                 // renders geojson on map, creates html elements for visual changes Expand panel
