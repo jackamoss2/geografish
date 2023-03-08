@@ -7,6 +7,7 @@ let vm = new Vue({
     el: "#app",
     delimiters: ['{&', '&}'],
     data: {
+        isCreator: false,
         csrftoken: '',
         mapID: '',
         mapTitle: '',
@@ -56,6 +57,12 @@ let vm = new Vue({
                         headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
                     })
                     .then(function (response) {
+                        // added isCreator assignment here since already pulling map info
+                        const checkUserID = document.getElementById('userID').value
+                        if (parseInt(checkUserID) == response.data.author) {
+                            vm.isCreator = true
+                        }
+
                         var viewExtent = null
                         if (response.data.default_view) {
                             viewExtent = response.data.default_view
@@ -104,19 +111,21 @@ let vm = new Vue({
                         console.log(newViewExtent)
 
                         // updates map object in DB with new default view params
-                        axios({
-                            method: 'GET',
-                            url: '/apis/v1/maps/' + vm.mapID + '/',
-                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                        }).then(response => {
-                            response.data.default_view = newViewExtent
+                        if (vm.isCreator) {
                             axios({
-                                method: 'PUT',
+                                method: 'GET',
                                 url: '/apis/v1/maps/' + vm.mapID + '/',
                                 headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                data: response.data
+                            }).then(response => {
+                                response.data.default_view = newViewExtent
+                                axios({
+                                    method: 'PUT',
+                                    url: '/apis/v1/maps/' + vm.mapID + '/',
+                                    headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                    data: response.data
+                                })
                             })
-                        })
+                        }
                     })
                 }
                 
@@ -154,16 +163,18 @@ let vm = new Vue({
                     }
                     function updateRenderer() {
                         geojsonlayer.renderer = selectedRenderer
-                        axios({
-                            method: 'POST',
-                            url: '/apis/v1/renderer/',
-                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                            data: {
-                                renderer: selectedRenderer,
-                                linked_data_id: geospatial_data.id,
-                                linked_map_id: Number(vm.mapID),
-                            },
-                        })
+                        if (vm.isCreator) {
+                            axios({
+                                method: 'POST',
+                                url: '/apis/v1/renderer/',
+                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                data: {
+                                    renderer: selectedRenderer,
+                                    linked_data_id: geospatial_data.id,
+                                    linked_map_id: Number(vm.mapID),
+                                },
+                            })
+                        }
                     }
                     let selectedRenderer
 
@@ -395,17 +406,19 @@ let vm = new Vue({
                             }
                             else {
                                 // otherwise, just update db with updated map list
-                                axios({
-                                    method: 'PUT',
-                                    url: '/apis/v1/data/' + geospatial_data.id + '/',
-                                    headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                    data: {
-                                        maps: geospatial_data.maps,
-                                    },
-                                })
-                                .catch(function (error) {
-                                    console.log(error)
-                                })
+                                if (vm.isCreator) {
+                                    axios({
+                                        method: 'PUT',
+                                        url: '/apis/v1/data/' + geospatial_data.id + '/',
+                                        headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                        data: {
+                                            maps: geospatial_data.maps,
+                                        },
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error)
+                                    })
+                                }
                             }
                         })
                         expandModify.appendChild(deleteButtonNode)
@@ -457,14 +470,16 @@ let vm = new Vue({
             })            
         },
         deleteData: function(id) {
-            axios({
-                method: 'DELETE',
-                url: '/apis/v1/data/' + id + '/',
-                headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+            if (vm.isCreator) {
+                axios({
+                    method: 'DELETE',
+                    url: '/apis/v1/data/' + id + '/',
+                    headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+            }
         },
         uploadData: function(geospatialData) {
             // first, get list of all geospatial_data ids and hashes, then check if new hash matches (aka if data already exists in database)
@@ -493,49 +508,53 @@ let vm = new Vue({
                             // add data to map view
                             vm.loadMap(action='upload new data', data=existingGeospatialData)
                             // update data's map list in db
-                            axios({
-                                method: 'PUT',
-                                url: '/apis/v1/data/' + existingGeospatialData.id + '/',
-                                headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                                data: {
-                                    // pk: this.mapID,
-                                    maps: existingGeospatialData.maps,
-                                },
-                            })
-                            .catch(function (error) {
-                                console.log(error)
-                            })
+                            if (vm.isCreator) {
+                                axios({
+                                    method: 'PUT',
+                                    url: '/apis/v1/data/' + existingGeospatialData.id + '/',
+                                    headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                                    data: {
+                                        // pk: this.mapID,
+                                        maps: existingGeospatialData.maps,
+                                    },
+                                })
+                                .catch(function (error) {
+                                    console.log(error)
+                                })
+                            }
                         })
                     }
                 }
 
                 // finally, if no match found, create object in db
                 if (createNewData == true) {
-                    axios({
-                        method: 'POST',
-                        url: '/apis/v1/data/',
-                        headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
-                        data: {
-                            title: geospatialData.name,
-                            geospatial_data: geospatialData,
-                            maps: [parseInt(vm.mapID),],
-                            data_hash: data_hash,
-                        },
-                    })
-                    // once object is created, get object and add to map view
-                    // need to pass to db and get from db in order to get id
-                    .then(function () {
+                    if (vm.isCreator) {
                         axios({
-                            method: 'GET',
-                            url: '/apis/v1/data/?data_hash=' + data_hash,
-                        }).then(response => {
-                            let newGeospatialData = response.data[0]
-                            vm.loadMap(action='upload new data', data=newGeospatialData)
+                            method: 'POST',
+                            url: '/apis/v1/data/',
+                            headers: {'X-CSRFToken': vm.csrftoken}, // from getCookie function
+                            data: {
+                                title: geospatialData.name,
+                                geospatial_data: geospatialData,
+                                maps: [parseInt(vm.mapID),],
+                                data_hash: data_hash,
+                            },
                         })
-                    })
-                    .catch(function (error) {
-                        console.log(error)
-                    })
+                        // once object is created, get object and add to map view
+                        // need to pass to db and get from db in order to get id
+                        .then(function () {
+                            axios({
+                                method: 'GET',
+                                url: '/apis/v1/data/?data_hash=' + data_hash,
+                            }).then(response => {
+                                let newGeospatialData = response.data[0]
+                                vm.loadMap(action='upload new data', data=newGeospatialData)
+                            })
+                        })
+                        .catch(function (error) {
+                            console.log(error)
+                        })
+                    }
                 }
             })
             .catch(function (error) {
@@ -557,18 +576,20 @@ let vm = new Vue({
             return cookieValue;
         },
         changeMapName: function() {
-            axios({
-                method: 'PUT',
-                url: '/apis/v1/maps/' + this.mapID + '/',
-                headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
-                data: {
-                    // pk: this.mapID,
-                    title: this.mapTitle,
-                },
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
+            if (vm.isCreator) {
+                axios({
+                    method: 'PUT',
+                    url: '/apis/v1/maps/' + this.mapID + '/',
+                    headers: {'X-CSRFToken': this.csrftoken}, // from getCookie function
+                    data: {
+                        // pk: this.mapID,
+                        title: this.mapTitle,
+                    },
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+            }
         },
     },
     
@@ -585,6 +606,7 @@ let vm = new Vue({
             method: 'GET',
             url: '/apis/v1/data/?map_id=' + this.mapID,
         }).then(response => {
+            // const user_id = JSON.parse(document.getElementById('user_id').textContent);
             recievedData = response.data
             if (recievedRenderers) { // only runs loadMap when both axios calls complete
                 this.loadMap(action='load from database', data=recievedData, renderers=recievedRenderers)

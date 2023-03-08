@@ -43,7 +43,8 @@ ul {
   /* margin:0px; */
   margin: 12px 20px;
   text-align: left;
-  width:100px;
+  width:140px;
+  
 }
 .nav-center {
   /* position: absolute; */
@@ -62,7 +63,8 @@ ul {
   /* display: flex; */
   text-align: right;
   margin:4px;
-  width:100px;
+  width:140px;
+  /* margin-top: 20px; */
 }
 
 .nav-right * {
@@ -100,6 +102,10 @@ ul {
   margin:0;
 }
 
+#profile-icon {
+  width:24px;
+  color:white;
+}
 
 #expand-default ul,h3,input {
   padding-top: 6px;
