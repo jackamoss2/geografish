@@ -13,10 +13,14 @@
         </div>
     </div>
 </div>
+<div id="mobile-home">
+    <h1>Use a larger screen to create a map<h1>
+</div>
 <div class="home-panel-container">
     <div class="home-panel">
         <div>
             <h1>About</h1>
+            <hr>
             <p>
                 GeograFish is a lightweight web app built to view basic GIS data. Users can create maps, add data, 
                 and customize visual properties. Maps can be shared via unique URL. Geografish is built with ArcGIS API for JavaScript. Currently, only GeoJSON data is supported.
@@ -29,14 +33,33 @@
             alt="map sample image"
         />
     </div>
-    <div class="home-panel">
+    <div id="sample-panel" class="home-panel">
         <div>
             <h1>Sample Maps</h1>
+            <hr>
+            <br>
             <div id="sample-gallery">
-                <div class="sample-map">
-                    <p>Placeholder</p>
-                    
-                </div>
+                <a href="https://geografish.herokuapp.com/map/epI5ZFKzvGvRB29p/">
+                    <div id="pdx-cip" class="sample-map">
+                        <div class="sample-map-text">
+                            <h1 class="white-back">Portland CIP</h1>
+                            <p class="white-back">
+                                Polygon features representing current Capital Improvement Projects (CIP) for the City of Portland Bureaus
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                <br>
+                <a href="https://geografish.herokuapp.com/map/YyP3CmwTlYw7Z3Cj/">
+                    <div id="ak-np" class="sample-map">
+                        <div class="sample-map-text">
+                            <h1 class="white-back">Alaskan National Parks</h1>
+                            <p class="white-back">
+                                Polygon features representing National Parks in Alaska
+                            </p>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>

@@ -20,10 +20,10 @@ ul {
   flex-wrap: nowrap;
   position: relative;
   height: 72px;
+  justify-content: space-between;
 }
 
 .header-main > div {
-  width: 33.33%;
   padding: 4px;
 }
 
@@ -43,12 +43,14 @@ ul {
   /* margin:0px; */
   margin: 12px 20px;
   text-align: left;
+  width:100px;
 }
 .nav-center {
   /* position: absolute; */
   /* left: 50%;
   transform: translate(-50%, 0%); */
   text-align: center;
+  /* width: */
 }
 .nav-center h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -60,6 +62,7 @@ ul {
   /* display: flex; */
   text-align: right;
   margin:4px;
+  width:100px;
 }
 
 .nav-right * {
