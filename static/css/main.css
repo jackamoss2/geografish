@@ -225,7 +225,7 @@ footer {
 }
 
 .sample-map-text {
-  width:400px;
+  max-width:400px;
   border: 3px solid #5e5e5e;
   border-radius: 3px;
 }
@@ -320,13 +320,19 @@ footer {
   }
 } */
 
+@media (min-width: 520px) {
+  .home-panel img {
+    width: 460px;
+  }
+}
+
 @media (min-width: 600px) {
   #fish-graphic img {
     width:600px;
   }
 }
 
-@media (min-width: 820px) {
+@media (min-width: 830px) {
   header {
     flex-direction: row;
     height: 90.5px;
@@ -336,9 +342,9 @@ footer {
     display:block;
   }
   
-  .home-panel img {
+  /* .home-panel img {
     width: 700px;
-  }
+  } */
   
   #home {
     display: flex;
@@ -347,11 +353,8 @@ footer {
   #mobile-home {
     display:none;
   }
-}
 
-@media (min-width: 1060px) {
   .home-panel {
-    width:calc(100% - 300px);
     margin:auto;
     margin-top:48px;
     display: flex;
@@ -366,12 +369,27 @@ footer {
   #sample-panel div {
     width: 100%;
   }
-
+  
   #sample-gallery {
     display:flex;
     flex-direction: row;
     justify-content: space-between;
     width:100%;
+  }
+  
+  #sample-gallery a {
+    box-sizing:border-box;
+    width:calc(50% - 40px)
+  }
+
+  #sample-gallery a * {
+    box-sizing:border-box;
+  }
+}
+
+@media (min-width: 1060px) {
+  .home-panel {
+    width:calc(100% - 300px);
   }
 
   #sample-gallery a {
